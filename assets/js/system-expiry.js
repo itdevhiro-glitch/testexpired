@@ -5,7 +5,8 @@
     expiresAt: new Date('2026-06-07T00:00:00+07:00'),
     displayDate: '6 Juni 2026',
     phoneText: '082191847167',
-    waUrl: 'https://wa.me/6282191847167'
+    waUrl: 'https://wa.me/6282191847167',
+    storageKey: 'zeppelin_expiry_notice_hidden_v3'
   };
 
   function ready(callback) {
@@ -30,53 +31,57 @@
     return Math.max(0, Math.ceil(ms / 86400000));
   }
 
-  function getNoticeKey() {
-    var today = new Date().toISOString().slice(0, 10);
-    return 'systemExpiryNoticeClosed:' + today;
+  function storageGet(key) {
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+
+  function storageSet(key, value) {
+    try { window.localStorage.setItem(key, value); } catch (e) {}
+  }
+
+  function isNoticeHidden() {
+    return storageGet(CONFIG.storageKey) === '1';
+  }
+
+  function hideNotice() {
+    storageSet(CONFIG.storageKey, '1');
+    var notice = document.querySelector('.system-expiry-notice');
+    if (notice) {
+      notice.classList.add('is-hiding');
+      window.setTimeout(function () { if (notice.parentNode) notice.remove(); }, 220);
+    }
+  }
+
+  function minimizeNotice() {
+    var notice = document.querySelector('.system-expiry-notice');
+    if (!notice) return;
+    notice.classList.toggle('is-minimized');
+    var btn = notice.querySelector('[data-expiry-minimize]');
+    if (btn) btn.setAttribute('aria-label', notice.classList.contains('is-minimized') ? 'Buka notice masa aktif' : 'Minimize notice masa aktif');
   }
 
   function buildNotice(daysLeft) {
     var wrapper = document.createElement('section');
-    wrapper.className = 'system-expiry-notice is-compact';
+    wrapper.className = 'system-expiry-notice';
     wrapper.setAttribute('role', 'status');
     wrapper.setAttribute('aria-label', 'Informasi masa aktif web');
     wrapper.innerHTML =
-      '<button type="button" class="system-expiry-notice__toggle" aria-label="Buka info masa aktif">' +
-        '<span class="system-expiry-notice__dot"></span>' +
-        '<span class="system-expiry-notice__mini-text">Aktif sampai ' + escapeHtml(CONFIG.displayDate) + '</span>' +
-        '<span class="system-expiry-notice__mini-badge">' + daysLeft + ' hari</span>' +
-      '</button>' +
-      '<div class="system-expiry-notice__panel" aria-hidden="true">' +
-        '<div class="system-expiry-notice__header">' +
-          '<div>' +
-            '<h3 class="system-expiry-notice__title">Info Masa Aktif Web</h3>' +
-            '<p class="system-expiry-notice__text">Aktif sampai <span class="system-expiry-notice__date">' + escapeHtml(CONFIG.displayDate) + '</span>. Setelah tanggal itu, web akan otomatis terkunci untuk keamanan data.</p>' +
-          '</div>' +
-          '<button type="button" class="system-expiry-notice__close" aria-label="Tutup notice">×</button>' +
-        '</div>' +
-        '<div class="system-expiry-notice__actions">' +
-          '<span class="system-expiry-notice__badge">Sisa ' + daysLeft + ' hari</span>' +
-          '<a class="system-expiry-notice__wa" href="' + CONFIG.waUrl + '" target="_blank" rel="noopener">Chat WA</a>' +
-        '</div>' +
+      '<div class="system-expiry-notice__head">' +
+        '<span class="system-expiry-notice__dot" aria-hidden="true"></span>' +
+        '<strong class="system-expiry-notice__title">Masa Aktif Web</strong>' +
+        '<span class="system-expiry-notice__badge">' + daysLeft + ' hari</span>' +
+        '<button type="button" class="system-expiry-notice__icon" data-expiry-minimize aria-label="Minimize notice masa aktif">−</button>' +
+        '<button type="button" class="system-expiry-notice__icon" data-expiry-hide aria-label="Tutup notice masa aktif">×</button>' +
+      '</div>' +
+      '<div class="system-expiry-notice__body">' +
+        '<p class="system-expiry-notice__text">Aktif sampai <b>' + escapeHtml(CONFIG.displayDate) + '</b>. Info lanjut hubungi admin.</p>' +
+        '<a class="system-expiry-notice__wa" href="' + CONFIG.waUrl + '" target="_blank" rel="noopener">Chat WA</a>' +
       '</div>';
-
-    var toggle = wrapper.querySelector('.system-expiry-notice__toggle');
-    var close = wrapper.querySelector('.system-expiry-notice__close');
-    var panel = wrapper.querySelector('.system-expiry-notice__panel');
-
-    function setOpen(isOpen) {
-      wrapper.classList.toggle('is-open', isOpen);
-      wrapper.classList.toggle('is-compact', !isOpen);
-      toggle.setAttribute('aria-expanded', String(isOpen));
-      panel.setAttribute('aria-hidden', String(!isOpen));
-    }
-
-    toggle.addEventListener('click', function () { setOpen(!wrapper.classList.contains('is-open')); });
-    close.addEventListener('click', function () {
-      try { localStorage.setItem(getNoticeKey(), '1'); } catch (e) {}
-      wrapper.remove();
+    wrapper.addEventListener('click', function (event) {
+      var target = event.target;
+      if (target && target.closest('[data-expiry-hide]')) hideNotice();
+      if (target && target.closest('[data-expiry-minimize]')) minimizeNotice();
     });
-
     return wrapper;
   }
 
@@ -105,10 +110,10 @@
         '</div>' +
         '<div class="system-expiry-lock__eyebrow">Meong, webnya lagi bobok</div>' +
         '<h1>Web Ini Lagi Istirahat Dulu 😺</h1>' +
-        '<p>Meongmin mendeteksi masa aktif web sudah selesai pada <span class="system-expiry-lock__date">' + escapeHtml(CONFIG.displayDate) + '</span>.</p>' +
-        '<p>Jadi halaman ini dikunci otomatis biar datanya aman dan kucingnya bisa rebahan dengan tenang.</p>' +
+        '<p>Masa aktif web sudah selesai pada <span class="system-expiry-lock__date">' + escapeHtml(CONFIG.displayDate) + '</span>.</p>' +
+        '<p>Halaman dikunci otomatis untuk menjaga akses dan data tetap aman.</p>' +
         '<a class="system-lock__wa" href="' + CONFIG.waUrl + '" target="_blank" rel="noopener">🐱 Chat Admin di WhatsApp</a>' +
-        '<p class="system-expiry-lock__note">Butuh akses lagi? Hubungi <strong>' + escapeHtml(CONFIG.phoneText) + '</strong>. Jangan lupa kasih ikan virtual buat kucingnya.</p>' +
+        '<p class="system-expiry-lock__note">Butuh akses lagi? Hubungi <strong>' + escapeHtml(CONFIG.phoneText) + '</strong>.</p>' +
       '</div>';
     return overlay;
   }
@@ -129,9 +134,7 @@
       return;
     }
 
-    try {
-      if (localStorage.getItem(getNoticeKey()) === '1') return;
-    } catch (e) {}
+    if (isNoticeHidden()) return;
 
     if (!document.querySelector('.system-expiry-notice')) {
       document.body.appendChild(buildNotice(getDaysLeft(now)));
