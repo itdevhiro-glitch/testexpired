@@ -1,178 +1,229 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Z-MARK - Stock Marketing</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-  <link href="../assets/css/mark.css" rel="stylesheet" />
-  <link href="../assets/css/system-expiry.css" rel="stylesheet" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Z-MARK PRO - Marketing Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+<link href="../assets/css/mark.css" rel="stylesheet"/>
+<style id="zmark-critical-css">
+:root{--primary:#ef1f25;--primary-dark:#c9151c;--orange:#f97316;--amber:#fb923c;--yellow:#f5b400;--ink:#111827;--muted:#64748b;--line:#e5e7eb;--soft:#f8fafc;--white:#fff;--green:#16a34a;--red:#ef4444;--danger:#dc2626;--shadow:0 18px 45px rgba(15,23,42,.08);--shadow-sm:0 6px 18px rgba(15,23,42,.06)}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f8fafc;color:var(--ink)}button,input,select{font-family:inherit}.hidden{display:none!important}.loading-screen{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center}.spinner{width:42px;height:42px;border:4px solid #fee2e2;border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+#main-content{min-height:100vh}.z-sidebar{width:290px;position:fixed;inset:0 auto 0 0;background:linear-gradient(180deg,#f04422 0%,#ef1f25 58%,#f04422 100%);color:#fff;padding:24px 18px;overflow:auto;box-shadow:12px 0 35px rgba(239,31,37,.20);z-index:50}.z-sidebar:after{content:"";position:absolute;width:300px;height:300px;left:-110px;bottom:-95px;border-radius:50%;background:rgba(251,146,60,.30);pointer-events:none}.z-logo{display:flex;gap:12px;align-items:center;padding:0 12px 28px;border-bottom:1px solid rgba(255,255,255,.13);margin-bottom:20px}.z-logo-mark{font-size:44px;line-height:1;font-weight:900;font-style:italic}.z-logo strong{font-size:27px;letter-spacing:.5px;display:block;line-height:.95}.z-logo span{font-size:10px;font-weight:800;letter-spacing:1.4px;opacity:.88}.z-side-title{font-size:12px;font-weight:900;text-transform:uppercase;margin:22px 14px 10px;color:#fff}.z-side-link{position:relative;z-index:1;display:flex;align-items:center;gap:13px;color:#fff;text-decoration:none;border-radius:8px;padding:12px 14px;margin:3px 0;font-weight:700;font-size:14px;cursor:pointer}.z-side-link i{width:18px;text-align:center}.z-side-link:hover{background:rgba(255,255,255,.13)}.z-side-link.active{background:#fff;color:var(--primary);box-shadow:0 10px 25px rgba(185,28,28,.20)}.z-side-footer{position:relative;z-index:1;margin-top:40px;font-size:11px;font-weight:700;opacity:.9;padding:15px 12px}.z-shell{margin-left:290px;min-height:100vh;width:calc(100% - 290px)}.z-topbar{height:86px;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px;position:sticky;top:0;z-index:20}.z-breadcrumb{display:flex;align-items:center;gap:14px;font-weight:800}.z-breadcrumb span{font-size:25px;color:var(--primary)}.z-menu-btn{background:none;border:0;font-size:20px;color:#334155;cursor:pointer}.z-profile{display:flex;align-items:center;gap:18px}.z-profile strong{display:block;font-size:15px}.z-profile small{display:block;color:#64748b;margin-top:3px}.z-bell{position:relative;border:0;background:#fff;width:38px;height:38px;border-radius:12px;color:#0f172a;box-shadow:var(--shadow-sm);cursor:pointer}.z-bell span{position:absolute;right:-3px;top:-5px;background:var(--primary);color:white;border-radius:50%;font-size:10px;font-weight:900;width:18px;height:18px;display:grid;place-items:center}.z-content{padding:34px 40px 32px}.z-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:28px}.z-page-head h1{margin:0;font-size:32px;letter-spacing:-.7px}.z-page-head p{margin:8px 0 0;color:#475569;font-size:15px}.z-head-actions{display:flex;gap:12px;flex-wrap:wrap}.z-btn{height:50px;border-radius:10px;padding:0 20px;border:1px solid var(--line);font-weight:800;font-size:14px;display:inline-flex;align-items:center;gap:10px;cursor:pointer;background:#fff;color:#1f2937}.z-btn.primary{background:linear-gradient(135deg,#ff392e,#ef1f25);color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(239,31,37,.22)}.z-btn.danger{color:var(--primary);border-color:#fecaca}.z-stats{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:28px}.z-stat{min-height:118px;border-radius:13px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-sm);padding:22px 18px 18px 95px;position:relative}.z-stat span{position:absolute;left:24px;top:24px;width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:#fff;font-size:22px}.z-stat.red{border-color:#ff4b4b}.z-stat.red span{background:linear-gradient(135deg,#ff453a,#ef1f25)}.z-stat.orange{border-color:#fb923c}.z-stat.orange span{background:linear-gradient(135deg,#ff8a28,#f97316)}.z-stat.amber{border-color:#fdba74}.z-stat.amber span{background:linear-gradient(135deg,#fb923c,#ff7a1a)}.z-stat.yellow{border-color:#facc15}.z-stat.yellow span{background:linear-gradient(135deg,#facc15,#f59e0b)}.z-stat.soft span{background:#fff;color:#0f172a;border:1px solid var(--line);box-shadow:var(--shadow-sm)}.z-stat p{margin:0 0 6px;color:#475569;font-size:14px}.z-stat b{font-size:27px;line-height:1;font-weight:900;display:block}.z-stat small{font-size:13px;color:#334155;margin-top:8px;display:block}.z-panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:28px 26px;box-shadow:var(--shadow)}.z-toolbar{display:grid;grid-template-columns:minmax(260px,1.7fr) .75fr .75fr .75fr auto;gap:16px;margin-bottom:26px}.search-wrapper{position:relative}.search-wrapper i{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:#334155}.search-input,.filter-select{height:44px;width:100%;border:1px solid var(--line);background:#fff;border-radius:9px;color:#111827;font-size:14px;outline:none}.search-input{padding:0 45px 0 18px}.filter-select{padding:0 14px}.search-input:focus,.filter-select:focus,.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(239,31,37,.10)}.z-reset{height:44px;padding:0 24px;background:#fff;color:var(--primary);border:1px solid var(--primary);border-radius:9px;font-weight:800;cursor:pointer}.z-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}.z-table{width:100%;border-collapse:collapse;min-width:930px;background:#fff}.z-table th{height:64px;background:#fbfcff;text-align:left;padding:0 22px;font-size:14px;color:#111827;border-bottom:1px solid var(--line);white-space:nowrap}.z-table td{height:64px;padding:0 22px;font-size:14px;color:#1f2937;border-bottom:1px solid var(--line);white-space:nowrap}.z-table tr:last-child td{border-bottom:none}.z-table tr:hover td{background:#fff7f7}.status-pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800}.status-ok{background:#eafbea;color:#16a34a;border:1px solid #bbf7d0}.status-low{background:#fff7df;color:#f59e0b;border:1px solid #fde68a}.status-empty{background:#fff1f2;color:#ef1f25;border:1px solid #fecaca}.action-row{display:flex;gap:10px}.icon-btn{width:34px;height:34px;border:1px solid var(--line);background:#fff;border-radius:8px;display:grid;place-items:center;cursor:pointer}.icon-btn.view{color:#0f172a}.icon-btn.edit{color:#f97316;border-color:#fed7aa}.icon-btn.delete{color:#ef1f25;border-color:#fecaca}.z-loader{text-align:center;padding:35px;color:#64748b}.z-pagination{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:22px;color:#334155;font-size:14px}.z-pagination select{height:42px;border:1px solid var(--line);border-radius:9px;padding:0 16px;background:#fff;margin:0 8px}.z-pagination button{width:34px;height:34px;border:1px solid var(--line);background:#fff;border-radius:8px;margin-left:6px;cursor:pointer}.z-pagination button.active{background:var(--primary);color:#fff;border-color:var(--primary)}.z-brand-foot{text-align:right;color:var(--primary);font-size:22px;font-weight:900;margin:30px 12px 0}.z-brand-foot span{font-size:32px;font-style:italic}.empty-state{text-align:center;padding:36px;color:#64748b}.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.50);z-index:1000;opacity:0;pointer-events:none;transition:.2s;backdrop-filter:blur(3px)}.modal-overlay.open{opacity:1;pointer-events:auto}.modal-container{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.96);width:92%;max-width:520px;max-height:90vh;overflow:auto;background:#fff;border-radius:18px;padding:24px;box-shadow:0 28px 90px rgba(15,23,42,.25);transition:.2s}.modal-overlay.open .modal-container{transform:translate(-50%,-50%) scale(1)}.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-title{font-size:20px;font-weight:900;margin:0}.modal-close{border:0;background:#f8fafc;border-radius:10px;width:38px;height:38px;color:#334155;cursor:pointer}.form-label{display:block;font-size:13px;font-weight:800;color:#334155;margin-bottom:7px}.form-input{width:100%;height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;margin-bottom:15px;outline:none}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.input-group{display:flex;gap:10px}.btn-full{width:100%;height:46px;border:0;border-radius:10px;font-size:14px;font-weight:900;cursor:pointer;margin-top:8px}.btn-primary{background:var(--primary);color:#fff}.btn-danger{background:#fff1f2;color:#ef1f25;border:1px solid #fecaca}.type-selector{display:flex;background:#f1f5f9;border-radius:12px;padding:5px;margin-bottom:18px}.type-opt{flex:1;text-align:center;padding:10px;border-radius:9px;font-weight:800;color:#64748b;cursor:pointer}.type-opt.active-out,.type-opt.active-in{background:#fff;box-shadow:var(--shadow-sm)}.type-opt.active-out{color:#f97316}.type-opt.active-in{color:#16a34a}.history-list{display:flex;flex-direction:column;gap:12px}.history-item{background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:12px;display:flex;gap:12px}.history-date,.history-user{font-size:11px;color:#64748b}.history-title{font-weight:800;margin:3px 0}.history-note{font-size:13px;color:#475569;margin:0}.history-badge{font-size:11px;font-weight:900;border-radius:999px;padding:3px 8px}.h-in{background:#dcfce7;color:#166534}.h-out{background:#ffedd5;color:#c2410c}.report-section{margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:20px}.report-label{font-size:12px;font-weight:900;text-transform:uppercase;display:block;margin-bottom:10px}.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.btn-report-opt{background:#f8fafc;border:1px solid var(--line);padding:15px;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer}.btn-report-pdf:hover{color:#2563eb;border-color:#bfdbfe}.btn-report-excel:hover{color:#15803d;border-color:#bbf7d0}.toast{position:fixed;bottom:28px;right:28px;background:#111827;color:#fff;padding:14px 18px;border-radius:12px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;z-index:2000;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s}.toast.show{transform:translateY(0);opacity:1}.toast.error{background:#dc2626}
+@media(max-width:1200px){.z-stats{grid-template-columns:repeat(3,1fr)}.z-toolbar{grid-template-columns:1fr 1fr}.z-reset{width:100%}}@media(max-width:860px){#main-content{display:block}.z-sidebar{transform:translateX(-105%);transition:.25s}.z-sidebar.open{transform:translateX(0)}.z-shell{margin-left:0;width:100%}.z-topbar{height:74px;padding:0 18px}.z-content{padding:24px 16px}.z-page-head{flex-direction:column}.z-head-actions{width:100%}.z-btn{flex:1;justify-content:center}.z-stats{grid-template-columns:1fr}.z-toolbar{grid-template-columns:1fr}.z-pagination{flex-direction:column;align-items:flex-start}.z-profile div{display:none}}@media(max-width:540px){.z-page-head h1{font-size:28px}.z-panel{padding:18px 12px}.form-row,.report-grid{grid-template-columns:1fr}.z-btn{width:100%}.z-head-actions{display:grid;grid-template-columns:1fr}.toast{left:16px;right:16px;bottom:18px}}
+
+</style>
+<link rel="stylesheet" href="../assets/css/system-expiry.css">
 </head>
 <body>
-  <div class="z-loading" id="loading-screen">
-    <div class="z-spinner"></div>
-    <strong>Memuat Z-MARK</strong>
-    <span>Validasi akses marketing...</span>
-  </div>
-
-  <main class="z-app" id="main-content" hidden>
-    <aside class="z-sidebar" id="sidebar">
-      <div class="z-brand">
-        <div class="z-logo">Z</div>
-        <div>
-          <strong>ZEPPELIN</strong>
-          <span>WE CREATE SOLUTIONS</span>
-        </div>
+<div class="loading-screen" id="loading-screen">
+<div class="spinner"></div>
+<p style="margin-top:15px; font-size:14px; font-weight:500;">Memuat Akses Marketing...</p>
+</div>
+<div id="main-content" style="display: none;">
+<aside class="z-sidebar">
+  <div class="z-logo"><div class="z-logo-mark">Z</div><div><strong>ZEPPELIN</strong><span>WE CREATE SOLUTIONS</span></div></div>
+  <a class="z-side-link" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+  <div class="z-side-title">Stock Marketing</div>
+  <a class="z-side-link active" href="mark.html"><i class="fa-solid fa-cube"></i> Z-MARK</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-layer-group"></i> Kategori</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-location-dot"></i> Lokasi</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-truck-field"></i> Supplier</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-tags"></i> Brand</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-ruler-combined"></i> Satuan</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-table-cells"></i> Rak</a>
+  <div class="z-side-title">Transaksi</div>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-box-archive"></i> Penerimaan</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-box-open"></i> Pengeluaran</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-arrows-rotate"></i> Mutasi</a>
+  <div class="z-side-title">Laporan</div>
+  <a class="z-side-link" onclick="openModal('modalReport')"><i class="fa-solid fa-file-lines"></i> Laporan Stok</a>
+  <a class="z-side-link" onclick="generateExcel('monthly')"><i class="fa-solid fa-file-excel"></i> Export Excel</a>
+  <div class="z-side-footer">© 2026 Zeppelin</div>
+</aside>
+<section class="z-shell">
+  <nav class="z-topbar">
+    <div class="z-breadcrumb"><button class="z-menu-btn" id="zMenuBtn"><i class="fa-solid fa-bars"></i></button><span>›</span><b>Z-MARK</b></div>
+    <div class="z-profile"><button class="z-bell"><i class="fa-regular fa-bell"></i><span>3</span></button><div><strong>Admin Zmark</strong><small>Marketing</small></div><i class="fa-solid fa-chevron-down"></i></div>
+  </nav>
+  <main class="z-content">
+    <div class="z-page-head">
+      <div><h1>Z-MARK</h1><p>Stock Marketing / Gudang Marketing</p></div>
+      <div class="z-head-actions"><button class="z-btn ghost" onclick="openModal('modalReport')"><i class="fa-solid fa-filter"></i> Filter</button><button class="z-btn ghost danger" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i> Export</button><button class="z-btn primary" onclick="window.openManageModal()"><i class="fa-solid fa-plus"></i> Tambah Barang</button></div>
+    </div>
+    <div class="z-stats">
+      <div class="z-stat red"><span><i class="fa-solid fa-cube"></i></span><p>Total Barang</p><b id="statItems">0</b><small>Item</small></div>
+      <div class="z-stat orange"><span><i class="fa-solid fa-boxes-stacked"></i></span><p>Total Stok</p><b id="statStock">0</b><small>Pcs</small></div>
+      <div class="z-stat amber"><span><i class="fa-solid fa-layer-group"></i></span><p>Kategori</p><b id="statCategory">0</b><small>Kategori</small></div>
+      <div class="z-stat yellow"><span><i class="fa-solid fa-location-dot"></i></span><p>Lokasi</p><b id="statLocation">0</b><small>Lokasi</small></div>
+      <div class="z-stat soft"><span><i class="fa-regular fa-clipboard"></i></span><p>Stok Rendah</p><b id="statLow">0</b><small>Item</small></div>
+      <div class="z-stat soft"><span><i class="fa-regular fa-file-lines"></i></span><p>Tidak Ada Stok</p><b id="statEmpty">0</b><small>Item</small></div>
+    </div>
+    <section class="z-panel">
+      <div class="z-toolbar">
+        <div class="search-wrapper"><i class="fa-solid fa-search"></i><input class="search-input" id="searchInput" placeholder="Cari nama barang, kode, atau barcode..." type="text"/></div>
+        <select class="filter-select" id="filterCategory"><option value="All">Semua Kategori</option><option value="Kartu Nama">Kartu Nama</option><option value="Cetak">Cetak &amp; Dokumen</option><option value="Merchandise">Merchandise &amp; Souvenir</option><option value="Display">Display &amp; Booth</option><option value="Elektronik">Elektronik &amp; Gadget</option><option value="Seragam">Seragam &amp; Pakaian</option><option value="Stationery">Stationery (ATK)</option><option value="Event">Perlengkapan Event</option><option value="Lainnya">Lainnya</option></select>
+        <select class="filter-select" id="filterLocation"><option value="All">Semua Lokasi</option></select>
+        <select class="filter-select" id="filterStatus"><option value="All">Semua Status</option><option value="ok">Tersedia</option><option value="low">Stok Rendah</option><option value="empty">Habis</option></select>
+        <button class="z-reset" id="resetFilter">Reset</button>
       </div>
-
-      <nav class="z-nav">
-        <button type="button" class="z-nav-item" data-nav="dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
-        <p>Stock Marketing</p>
-        <button type="button" class="z-nav-item active" data-view="items"><i class="fa-solid fa-cube"></i> Z-MARK</button>
-        <button type="button" class="z-nav-item" data-view="kategori"><i class="fa-solid fa-layer-group"></i> Kategori</button>
-        <button type="button" class="z-nav-item" data-view="lokasi"><i class="fa-solid fa-location-dot"></i> Lokasi</button>
-        <button type="button" class="z-nav-item" data-view="supplier"><i class="fa-solid fa-truck-fast"></i> Supplier</button>
-        <button type="button" class="z-nav-item" data-view="brand"><i class="fa-solid fa-tags"></i> Brand</button>
-        <button type="button" class="z-nav-item" data-view="satuan"><i class="fa-solid fa-ruler-combined"></i> Satuan</button>
-        <button type="button" class="z-nav-item" data-view="rak"><i class="fa-solid fa-table-cells"></i> Rak</button>
-        <p>Transaksi</p>
-        <button type="button" class="z-nav-item" data-view="penerimaan"><i class="fa-solid fa-square-plus"></i> Penerimaan</button>
-        <button type="button" class="z-nav-item" data-view="pengeluaran"><i class="fa-solid fa-square-minus"></i> Pengeluaran</button>
-        <button type="button" class="z-nav-item" data-view="mutasi"><i class="fa-solid fa-rotate"></i> Mutasi</button>
-        <p>Laporan</p>
-        <button type="button" class="z-nav-item" data-report="stock"><i class="fa-regular fa-file-lines"></i> Laporan Stok</button>
-        <button type="button" class="z-nav-item" data-report="items"><i class="fa-regular fa-file-excel"></i> Laporan Barang</button>
-        <button type="button" class="z-nav-item" data-report="mutasi"><i class="fa-regular fa-paste"></i> Laporan Mutasi</button>
-      </nav>
-      <div class="z-footer">© 2026 Zeppelin</div>
-    </aside>
-
-    <section class="z-main">
-      <header class="z-topbar">
-        <div class="z-crumb">
-          <button type="button" class="z-icon-btn" id="toggleSidebar" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
-          <span><i class="fa-solid fa-chevron-right"></i> Z-MARK</span>
-        </div>
-        <div class="z-user">
-          <button type="button" class="z-bell" id="btnLowStock" title="Lihat stok rendah"><i class="fa-regular fa-bell"></i><b id="notifCount">0</b></button>
-          <div class="z-user-info"><strong id="userName">Admin Zmark</strong><span id="userDept">Marketing</span></div>
-          <button type="button" class="z-icon-btn" id="backDashboard" title="Kembali dashboard"><i class="fa-solid fa-chevron-down"></i></button>
-        </div>
-      </header>
-
-      <div class="z-content">
-        <section class="z-title-row">
-          <div>
-            <h1>Z-MARK</h1>
-            <p>Stock Marketing / Gudang Marketing</p>
-          </div>
-          <div class="z-actions">
-            <div class="z-dropdown-wrap">
-              <button type="button" class="z-btn z-btn-light" id="btnFilter"><i class="fa-solid fa-filter"></i> Filter <i class="fa-solid fa-chevron-down"></i></button>
-              <div class="z-menu" id="filterMenu">
-                <button type="button" data-quick="low">Stok Rendah</button>
-                <button type="button" data-quick="empty">Tidak Ada Stok</button>
-                <button type="button" data-quick="available">Tersedia</button>
-                <button type="button" data-quick="all">Semua Barang</button>
-              </div>
-            </div>
-            <div class="z-dropdown-wrap">
-              <button type="button" class="z-btn z-btn-outline" id="btnExport"><i class="fa-regular fa-file-lines"></i> Export <i class="fa-solid fa-chevron-down"></i></button>
-              <div class="z-menu" id="exportMenu">
-                <button type="button" data-export="excel"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
-                <button type="button" data-export="pdf"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
-                <button type="button" data-export="csv"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
-              </div>
-            </div>
-            <button type="button" class="z-btn z-btn-primary" id="btnAdd"><i class="fa-solid fa-plus"></i> Tambah Barang</button>
-          </div>
-        </section>
-
-        <section class="z-stats" id="statsGrid"></section>
-
-        <section class="z-panel">
-          <div class="z-filterbar">
-            <div class="z-search"><input id="searchInput" type="search" placeholder="Cari nama barang, kode, barcode..." /><i class="fa-solid fa-magnifying-glass"></i></div>
-            <select id="filterCategory"><option value="all">Semua Kategori</option></select>
-            <select id="filterLocation"><option value="all">Semua Lokasi</option></select>
-            <select id="filterStatus"><option value="all">Semua Status</option><option value="available">Tersedia</option><option value="low">Stok Rendah</option><option value="empty">Habis</option></select>
-            <button type="button" class="z-btn z-btn-reset" id="btnReset">Reset</button>
-          </div>
-
-          <div class="z-view-head" id="viewHead"></div>
-          <div class="z-table-wrap">
-            <table class="z-table" id="dataTable"></table>
-          </div>
-          <div class="z-table-foot">
-            <label>Tampilkan <select id="pageSize"><option>10</option><option>25</option><option>50</option><option>100</option></select> data</label>
-            <div class="z-pagination" id="pagination"></div>
-          </div>
-        </section>
-      </div>
+      <div id="inventoryLoader" class="z-loader"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...</div>
+      <div class="z-table-wrap"><table class="z-table"><thead><tr><th>No</th><th>Kode Barang</th><th>Nama Barang</th><th>Kategori</th><th>Lokasi</th><th>Stok</th><th>Satuan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="inventoryList"></tbody></table></div>
+      <div class="z-pagination"><span>Tampilkan <select><option>10</option><option>25</option><option>50</option></select> data</span><div><button disabled>‹</button><button class="active">1</button><button>2</button><button>3</button><button>…</button><button>28</button><button>›</button></div></div>
     </section>
+    <div class="z-brand-foot"><span>Z</span> ZEPPELIN</div>
   </main>
-
-  <div class="z-modal" id="itemModal" aria-hidden="true">
-    <div class="z-modal-card">
-      <div class="z-modal-head"><h3 id="itemModalTitle">Tambah Barang</h3><button type="button" class="z-close" data-close><i class="fa-solid fa-xmark"></i></button></div>
-      <form id="itemForm" class="z-form">
-        <input type="hidden" id="itemId" />
-        <label>Nama Barang<input id="itemName" required placeholder="Contoh: Pulpen Ballpoint Hitam" /></label>
-        <div class="z-form-grid">
-          <label>Kode Barang<input id="itemSku" required placeholder="BRG-0001" /></label>
-          <label>Barcode<input id="itemBarcode" placeholder="Opsional" /></label>
-        </div>
-        <div class="z-form-grid">
-          <label>Kategori<input id="itemCat" required placeholder="ATK" /></label>
-          <label>Lokasi/Rak<input id="itemLoc" required placeholder="Rak A1" /></label>
-        </div>
-        <div class="z-form-grid">
-          <label>Stok<input id="itemStock" type="number" min="0" required /></label>
-          <label>Satuan<input id="itemUnit" required placeholder="Pcs" /></label>
-        </div>
-        <div class="z-form-grid">
-          <label>Supplier<input id="itemSupplier" placeholder="Nama supplier" /></label>
-          <label>Brand<input id="itemBrand" placeholder="Nama brand" /></label>
-        </div>
-        <label>Catatan<textarea id="itemNote" rows="3" placeholder="Catatan opsional"></textarea></label>
-        <div class="z-modal-actions"><button type="button" class="z-btn z-btn-light" data-close>Batal</button><button type="submit" class="z-btn z-btn-primary">Simpan</button></div>
-      </form>
-    </div>
-  </div>
-
-  <div class="z-modal" id="viewModal" aria-hidden="true">
-    <div class="z-modal-card small">
-      <div class="z-modal-head"><h3>Detail Barang</h3><button type="button" class="z-close" data-close><i class="fa-solid fa-xmark"></i></button></div>
-      <div id="viewDetail" class="z-detail"></div>
-      <div class="z-modal-actions"><button type="button" class="z-btn z-btn-outline" id="btnDetailOut">Pengeluaran</button><button type="button" class="z-btn z-btn-primary" id="btnDetailIn">Penerimaan</button></div>
-    </div>
-  </div>
-
-  <div class="z-modal" id="trxModal" aria-hidden="true">
-    <div class="z-modal-card small">
-      <div class="z-modal-head"><h3 id="trxTitle">Update Stok</h3><button type="button" class="z-close" data-close><i class="fa-solid fa-xmark"></i></button></div>
-      <form id="trxForm" class="z-form">
-        <input type="hidden" id="trxItemId" />
-        <input type="hidden" id="trxType" />
-        <div class="z-alert" id="trxInfo"></div>
-        <div class="z-form-grid">
-          <label>Jumlah<input id="trxQty" type="number" min="1" required /></label>
-          <label>Satuan<input id="trxUnit" required /></label>
-        </div>
-        <label>Catatan<textarea id="trxNote" rows="3" required placeholder="Contoh: Restock vendor / Dipakai event"></textarea></label>
-        <div class="z-modal-actions"><button type="button" class="z-btn z-btn-light" data-close>Batal</button><button type="submit" class="z-btn z-btn-primary">Konfirmasi</button></div>
-      </form>
-    </div>
-  </div>
-
-  <div class="z-toast" id="toast"></div>
-  <script src="../assets/js/mark.js" type="module"></script>
-  <script defer src="../assets/js/system-expiry.js"></script>
+</section>
+</div>
+<div class="modal-overlay" id="modalManage">
+<div class="modal-container">
+<div class="modal-header">
+<h3 class="modal-title" id="manageTitle">Tambah Barang</h3>
+<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<input id="manageId" type="hidden"/>
+<label class="form-label">Nama Barang</label>
+<input class="form-input" id="itemName" placeholder="Contoh: Kartu Nama Sales" type="text"/>
+<div class="form-row">
+<div style="grid-column: span 2;">
+<label class="form-label">Kategori</label>
+<select class="form-input" id="itemCat">
+<option value="Kartu Nama">Kartu Nama</option>
+<option value="Cetak">Cetak (Brosur/Flyer/Katalog)</option>
+<option value="Merchandise">Merchandise (Mug/Tumblr/Payung)</option>
+<option value="Display">Display (Banner/Backdrop/Booth)</option>
+<option value="Elektronik">Elektronik (Tablet/Speaker/TV)</option>
+<option value="Seragam">Seragam / Kaos Tim</option>
+<option value="Stationery">Stationery / Alat Tulis Kantor</option>
+<option value="Event">Perlengkapan Event / Dekorasi</option>
+<option value="Lainnya">Lainnya</option>
+</select>
+</div>
+</div>
+<div class="form-row">
+<div>
+<label class="form-label">SKU (Kode)</label>
+<input class="form-input" id="itemSku" placeholder="MRK-001" type="text"/>
+</div>
+<div>
+<label class="form-label">Lokasi Rak</label>
+<input class="form-input" id="itemLoc" placeholder="Rak A1" type="text"/>
+</div>
+</div>
+<div class="form-row">
+<div>
+<label class="form-label">Stok Awal</label>
+<input class="form-input" id="itemStock" type="number" value="0"/>
+</div>
+<div>
+<label class="form-label">Satuan</label>
+<select class="form-input" id="itemUnit">
+<option value="Pcs">Pcs</option>
+<option value="Pack">Pack</option>
+<option value="Unit">Unit</option>
+</select>
+</div>
+</div>
+<button class="btn-full btn-primary" onclick="saveItem()">Simpan Data</button>
+<button class="btn-full btn-danger" id="btnDelete" onclick="deleteItem()" style="display:none;">Hapus Barang</button>
+</div>
+</div>
+<div class="modal-overlay" id="modalTrans">
+<div class="modal-container">
+<div class="modal-header">
+<h3 class="modal-title">Update Stok</h3>
+<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<p id="transItemInfo" style="margin-bottom:15px; font-size:14px; color:var(--gray);"></p>
+<div class="type-selector">
+<div class="type-opt active-out" id="optOut" onclick="setTransType('OUT')">Keluar (Pakai)</div>
+<div class="type-opt" id="optIn" onclick="setTransType('IN')">Masuk (Restock)</div>
+</div>
+<label class="form-label">Jumlah &amp; Satuan</label>
+<div class="input-group">
+<input class="form-input" id="transQty" placeholder="0" style="font-size:18px; font-weight:700;" type="number"/>
+<select class="form-input" id="transUnit" style="font-weight:600;">
+<option value="Pcs">Pcs</option>
+<option value="Pack">Pack</option>
+<option value="Unit">Unit</option>
+</select>
+</div>
+<label class="form-label">Catatan (Wajib)</label>
+<input class="form-input" id="transNote" placeholder="Contoh: Event JCC / Restock Vendor..." type="text"/>
+<button class="btn-full btn-primary" onclick="processTransaction()">Konfirmasi</button>
+</div>
+</div>
+<div class="modal-overlay" id="modalHistory">
+<div class="modal-container">
+<div class="modal-header">
+<h3 class="modal-title">Riwayat Barang</h3>
+<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div style="background:var(--light); padding:10px; border-radius:8px; margin-bottom:15px;">
+<h4 id="histItemName" style="margin:0; font-size:14px;">Nama Barang</h4>
+<span id="histItemSku" style="font-size:11px; color:var(--gray); font-family:monospace;">SKU</span>
+</div>
+<div id="historyLoader" style="text-align:center; padding:20px;">
+<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gray);"></i>
+</div>
+<div class="history-list" id="historyListContainer"></div>
+</div>
+</div>
+<div class="modal-overlay" id="modalReport">
+<div class="modal-container">
+<div class="modal-header">
+<h3 class="modal-title">Export Data</h3>
+<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<p style="font-size:13px; color:var(--gray); margin-bottom:20px;">Unduh laporan untuk kebutuhan administrasi atau analisa Finance.</p>
+<div class="report-section">
+<span class="report-label">Laporan PDF (Print Ready)</span>
+<div class="report-grid">
+<button class="btn-report-opt btn-report-pdf" onclick="generateReport('daily')">
+<i class="fa-regular fa-calendar-check"></i>
+<span>Harian</span>
+</button>
+<button class="btn-report-opt btn-report-pdf" onclick="generateReport('monthly')">
+<i class="fa-regular fa-calendar-days"></i>
+<span>Bulanan</span>
+</button>
+<button class="btn-report-opt btn-report-pdf" onclick="generateReport('yearly')">
+<i class="fa-regular fa-calendar"></i>
+<span>Tahunan</span>
+</button>
+</div>
+</div>
+<div class="report-section" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+<span class="report-label">Data Excel</span>
+<div class="report-grid">
+<button class="btn-report-opt btn-report-excel" onclick="generateExcel('daily')">
+<i class="fa-solid fa-file-excel"></i>
+<span>Harian .xlsx</span>
+</button>
+<button class="btn-report-opt btn-report-excel" onclick="generateExcel('monthly')">
+<i class="fa-solid fa-file-excel"></i>
+<span>Bulanan .xlsx</span>
+</button>
+<button class="btn-report-opt btn-report-excel" onclick="generateExcel('yearly')">
+<i class="fa-solid fa-file-excel"></i>
+<span>Tahunan .xlsx</span>
+</button>
+</div>
+</div>
+<div id="reportLoader" style="text-align:center; padding:15px; display:none;">
+<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--primary);"></i> Memproses Data...
+            </div>
+</div>
+</div>
+<div class="toast" id="toast">
+<i class="fa-solid fa-info-circle"></i> <span id="toastMsg">Notification</span>
+</div>
+<script src="../assets/js/mark.js" type="module"></script>
+<script defer src="../assets/js/system-expiry.js"></script>
 </body>
 </html>
