@@ -48,7 +48,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                 get(userRef).then((snapshot) => {
                     // Admin redirect
                     if (user.email === 'root@zeppelin.center') {
-                        window.location.href = '../index.html?reason=admin_wrong_page';
+                        window.location.href = 'login.html?reason=admin_wrong_page';
                         return;
                     }
 
@@ -69,22 +69,22 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                             loadUserHistory(user.uid);
                             
                         } else {
-                            signOut(auth).then(() => window.location.href = '../index.html?reason=pending');
+                            signOut(auth).then(() => window.location.href = 'login.html?reason=pending');
                         }
                     } else {
-                        signOut(auth).then(() => window.location.href = '../index.html?reason=no_data');
+                        signOut(auth).then(() => window.location.href = 'login.html?reason=no_data');
                     }
                 }).catch((err) => {
                     console.error(err);
-                    signOut(auth).then(() => window.location.href = '../index.html?reason=error');
+                    signOut(auth).then(() => window.location.href = 'login.html?reason=error');
                 });
             } else {
-                window.location.href = '../index.html';
+                window.location.href = 'login.html';
             }
         });
 
         logoutBtn.addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = '../index.html');
+            signOut(auth).then(() => window.location.href = 'login.html');
         });
 
         // --- SUBMIT FORM ---

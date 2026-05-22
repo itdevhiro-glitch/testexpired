@@ -66,12 +66,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                 currentUser = user;
                 loadUserProfile(user.uid);
             } else {
-                window.location.href = '../index.html';
+                window.location.href = 'login.html';
             }
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = '../index.html');
+            signOut(auth).then(() => window.location.href = 'login.html');
         });
 
         function loadUserProfile(uid) {
@@ -88,7 +88,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                     initApp();
                 } else {
                     signOut(auth);
-                    window.location.href = '../index.html?error=unauthorized';
+                    window.location.href = 'login.html?error=unauthorized';
                 }
             });
         }

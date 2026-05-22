@@ -66,7 +66,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 
         const handleLogout = () => {
              signOut(auth).then(() => {
-                window.location.href = '../index.html'; 
+                window.location.href = 'login.html'; 
             }).catch((error) => {
                 showToast("Gagal logout, silakan coba lagi."); 
             });
@@ -110,8 +110,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const userRef = ref(db, 'users/' + user.uid);
+                const isRootAdmin = user.email === 'root@zeppelin.center';
+                const userDataRequest = isRootAdmin ? Promise.resolve({ exists: () => false, val: () => ({}) }) : get(userRef);
                 
-                get(userRef).then((snapshot) => {
+                userDataRequest.then((snapshot) => {
                     
                     let isHRD = false; 
                     let isIT = false;
@@ -152,26 +154,26 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                             
                         } else if (userData.status === 'pending') {
                             signOut(auth).then(() => {
-                            window.location.href = '../index.html?reason=pending'; 
+                            window.location.href = 'login.html?reason=pending'; 
                         });
                         return;
                         
                         } else if (userData.status === 'rejected') { 
                             signOut(auth).then(() => {
-                                window.location.href = '../index.html?reason=rejected';
+                                window.location.href = 'login.html?reason=rejected';
                             });
                             return;
                         
                         } else { 
                             signOut(auth).then(() => {
-                                window.location.href = '../index.html?reason=invalid';
+                                window.location.href = 'login.html?reason=invalid';
                             });
                             return;
                         }
                         
                     } else {
                         signOut(auth).then(() => {
-                            window.location.href = '../index.html?reason=no_data';
+                            window.location.href = 'login.html?reason=no_data';
                         });
                         return;
                     }
@@ -268,12 +270,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 
                 }).catch((error) => {
                     signOut(auth).then(() => {
-                        window.location.href = '../index.html?reason=db_error';
+                        window.location.href = 'login.html?reason=db_error';
                     });
                 });
 
             } else {
-                window.location.href = '../index.html';
+                window.location.href = 'login.html';
             }
         });
         

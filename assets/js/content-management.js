@@ -51,7 +51,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                     }
                 });
             } else {
-                window.location.href = '../index.html';
+                window.location.href = 'login.html';
             }
         });
 
@@ -312,7 +312,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 
         // Logout
         document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.href = '../index.html');
+            signOut(auth).then(() => window.location.href = 'login.html');
         });
 
         // Message Toast

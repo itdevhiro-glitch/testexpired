@@ -19,10 +19,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
         };
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                if (user.email === 'root@zeppelin.center') window.location.href = 'dashboard.html';
+                if (user.email === 'root@zeppelin.center') { sessionStorage.setItem('zeppelin_login_ok','1'); window.location.href = 'dashboard.html'; }
                 else {
                     get(ref(db, 'users/' + user.uid)).then((snap) => {
-                        if (snap.exists() && snap.val().status === 'approved') window.location.href = 'dashboard.html';
+                        if (snap.exists() && snap.val().status === 'approved') { sessionStorage.setItem('zeppelin_login_ok','1'); window.location.href = 'dashboard.html'; }
                     });
                 }
             }
@@ -44,11 +44,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                 const userCredential = await signInWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
                 if (user.email === 'root@zeppelin.center') {
+                    sessionStorage.setItem('zeppelin_login_ok','1');
                     window.location.href = 'dashboard.html';
                     return;
                 }
                 const snapshot = await get(ref(db, 'users/' + user.uid));
                 if (snapshot.exists() && snapshot.val().status === 'approved') {
+                    sessionStorage.setItem('zeppelin_login_ok','1');
                     window.location.href = 'dashboard.html';
                 } else {
                     const status = snapshot.exists() ? snapshot.val().status : 'unknown';

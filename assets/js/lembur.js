@@ -29,7 +29,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
       if (user) {
         hideLoadingScreen();
       } else {
-        window.location.href = '../index.html';
+        window.location.href = 'login.html';
       }
     });
 

@@ -23,7 +23,7 @@ const firebaseConfig = {
             loadUserTickets(user.uid);
             loadUserAssets(user.uid);
         } else {
-            window.location.href = '../index.html'; 
+            window.location.href = 'login.html'; 
         }
     });
 
@@ -178,7 +178,7 @@ const firebaseConfig = {
         try {
             await auth.currentUser.updatePassword(p1);
             alert("Password berhasil diganti! Silakan login ulang.");
-            auth.signOut().then(() => window.location.href = '../index.html');
+            auth.signOut().then(() => window.location.href = 'login.html');
         } catch (err) {
             alert("Error: " + err.message);
             if(err.code === 'auth/requires-recent-login') {
@@ -192,6 +192,6 @@ const firebaseConfig = {
 
     window.logout = () => {
         if(confirm("Yakin ingin keluar?")) {
-            auth.signOut().then(() => window.location.href = '../index.html');
+            auth.signOut().then(() => window.location.href = 'login.html');
         }
     };

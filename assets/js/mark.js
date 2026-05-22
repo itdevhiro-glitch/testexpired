@@ -38,10 +38,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
                         window.location.replace('dashboard.html');
                     }
                 }).catch(() => {
-                    window.location.replace('../index.html');
+                    window.location.replace('login.html');
                 });
             } else {
-                window.location.replace('../index.html');
+                window.location.replace('login.html');
             }
         });
 

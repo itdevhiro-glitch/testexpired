@@ -42,7 +42,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                     }
                 });
             } else {
-                window.location.href = '../index.html';
+                window.location.href = 'login.html';
             }
         });
 

@@ -1,3 +1,8 @@
+
+// Safe redirect helper: kalau user baru saja login, jangan lempar ulang ke landing intro.
+if (sessionStorage.getItem('zeppelin_login_ok') === '1' && location.pathname.endsWith('/index.html')) {
+  window.location.href = 'pages/dashboard.html';
+}
 // Extracted from index.html
 window.addEventListener('load', () => {
             const btn = document.getElementById('morph-btn');

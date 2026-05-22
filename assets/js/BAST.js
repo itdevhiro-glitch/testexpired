@@ -44,7 +44,7 @@ window.addEventListener('load', function() {
 
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
-        window.location.href = '../index.html';
+        window.location.href = 'login.html';
         return;
     }
 
@@ -52,7 +52,7 @@ onAuthStateChanged(auth, async (user) => {
     const snapshot = await get(userRef);
 
     if (!snapshot.exists()) {
-        window.location.href = '../index.html';
+        window.location.href = 'login.html';
         return;
     }
 
