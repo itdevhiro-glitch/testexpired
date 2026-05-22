@@ -19,6 +19,12 @@
 
 </style>
 <link rel="stylesheet" href="../assets/css/system-expiry.css">
+
+<style id="zmark-scale-fix">
+@media (min-width:861px){.z-sidebar{width:240px;padding:18px 14px}.z-shell{margin-left:240px;width:calc(100% - 240px)}.z-topbar{height:66px;padding:0 24px}.z-content{padding:22px 26px 24px}.z-page-head{margin-bottom:18px}.z-page-head h1{font-size:26px}.z-page-head p{font-size:13px}.z-btn{height:40px;padding:0 14px;border-radius:9px;font-size:13px}.z-logo{padding-bottom:18px;margin-bottom:14px}.z-logo-mark{font-size:34px}.z-logo strong{font-size:22px}.z-side-title{margin:16px 10px 8px;font-size:11px}.z-side-link{padding:9px 11px;font-size:13px;gap:10px}.z-stats{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:18px}.z-stat{min-height:88px;padding:15px 12px 12px 72px;border-radius:12px}.z-stat span{left:16px;top:18px;width:42px;height:42px;font-size:18px}.z-stat p{font-size:12px}.z-stat b{font-size:21px}.z-stat small{font-size:11px;margin-top:5px}.z-panel{padding:18px;border-radius:12px}.z-toolbar{gap:10px;margin-bottom:16px;grid-template-columns:minmax(240px,1.5fr) .72fr .72fr .65fr auto}.search-input,.filter-select,.z-reset{height:38px;font-size:13px}.z-table{min-width:900px}.z-table th,.z-table td{height:48px;padding:0 14px;font-size:13px}.status-pill{padding:4px 9px;font-size:12px}.icon-btn{width:31px;height:31px}.z-pagination{margin-top:14px}.z-brand-foot{margin-top:18px;font-size:17px}.z-brand-foot span{font-size:26px}}
+@media(max-width:1380px) and (min-width:861px){.z-stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:540px){.z-table{min-width:760px}.action-row{gap:6px}.icon-btn{width:32px;height:32px}.z-pagination div{display:flex;flex-wrap:wrap;gap:6px}.z-pagination button{margin-left:0}}
+</style>
 </head>
 <body>
 <div class="loading-screen" id="loading-screen">
@@ -31,16 +37,16 @@
   <a class="z-side-link" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
   <div class="z-side-title">Stock Marketing</div>
   <a class="z-side-link active" href="mark.html"><i class="fa-solid fa-cube"></i> Z-MARK</a>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-layer-group"></i> Kategori</a>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-location-dot"></i> Lokasi</a>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-truck-field"></i> Supplier</a>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-tags"></i> Brand</a>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-ruler-combined"></i> Satuan</a>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-table-cells"></i> Rak</a>
+  <a class="z-side-link" onclick="focusZFilter('filterCategory')"><i class="fa-solid fa-layer-group"></i> Kategori</a>
+  <a class="z-side-link" onclick="focusZFilter('filterLocation')"><i class="fa-solid fa-location-dot"></i> Lokasi</a>
+  <a class="z-side-link" onclick="showZmarkInfo('Supplier bisa dicatat di kolom catatan transaksi/restock.')"><i class="fa-solid fa-truck-field"></i> Supplier</a>
+  <a class="z-side-link" onclick="focusZSearch()"><i class="fa-solid fa-tags"></i> Brand</a>
+  <a class="z-side-link" onclick="window.openManageModal()"><i class="fa-solid fa-ruler-combined"></i> Satuan</a>
+  <a class="z-side-link" onclick="focusZFilter('filterLocation')"><i class="fa-solid fa-table-cells"></i> Rak</a>
   <div class="z-side-title">Transaksi</div>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-box-archive"></i> Penerimaan</a>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-box-open"></i> Pengeluaran</a>
-  <a class="z-side-link" href="#"><i class="fa-solid fa-arrows-rotate"></i> Mutasi</a>
+  <a class="z-side-link" onclick="openQuickTransaction('IN')"><i class="fa-solid fa-box-archive"></i> Penerimaan</a>
+  <a class="z-side-link" onclick="openQuickTransaction('OUT')"><i class="fa-solid fa-box-open"></i> Pengeluaran</a>
+  <a class="z-side-link" onclick="openModal('modalReport')"><i class="fa-solid fa-arrows-rotate"></i> Mutasi</a>
   <div class="z-side-title">Laporan</div>
   <a class="z-side-link" onclick="openModal('modalReport')"><i class="fa-solid fa-file-lines"></i> Laporan Stok</a>
   <a class="z-side-link" onclick="generateExcel('monthly')"><i class="fa-solid fa-file-excel"></i> Export Excel</a>
@@ -49,12 +55,12 @@
 <section class="z-shell">
   <nav class="z-topbar">
     <div class="z-breadcrumb"><button class="z-menu-btn" id="zMenuBtn"><i class="fa-solid fa-bars"></i></button><span>›</span><b>Z-MARK</b></div>
-    <div class="z-profile"><button class="z-bell"><i class="fa-regular fa-bell"></i><span>3</span></button><div><strong>Admin Zmark</strong><small>Marketing</small></div><i class="fa-solid fa-chevron-down"></i></div>
+    <div class="z-profile"><button class="z-bell" onclick="showZmarkNotif()"><i class="fa-regular fa-bell"></i><span id="notifCount">0</span></button><div onclick="location.href='profile.html'" style="cursor:pointer"><strong id="zUserName">Admin Zmark</strong><small id="zUserRole">Marketing</small></div><i class="fa-solid fa-chevron-down"></i></div>
   </nav>
   <main class="z-content">
     <div class="z-page-head">
       <div><h1>Z-MARK</h1><p>Stock Marketing / Gudang Marketing</p></div>
-      <div class="z-head-actions"><button class="z-btn ghost" onclick="openModal('modalReport')"><i class="fa-solid fa-filter"></i> Filter</button><button class="z-btn ghost danger" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i> Export</button><button class="z-btn primary" onclick="window.openManageModal()"><i class="fa-solid fa-plus"></i> Tambah Barang</button></div>
+      <div class="z-head-actions"><button class="z-btn ghost" onclick="focusZSearch()"><i class="fa-solid fa-filter"></i> Filter</button><button class="z-btn ghost danger" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i> Export</button><button class="z-btn primary" onclick="window.openManageModal()"><i class="fa-solid fa-plus"></i> Tambah Barang</button></div>
     </div>
     <div class="z-stats">
       <div class="z-stat red"><span><i class="fa-solid fa-cube"></i></span><p>Total Barang</p><b id="statItems">0</b><small>Item</small></div>
@@ -74,7 +80,7 @@
       </div>
       <div id="inventoryLoader" class="z-loader"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...</div>
       <div class="z-table-wrap"><table class="z-table"><thead><tr><th>No</th><th>Kode Barang</th><th>Nama Barang</th><th>Kategori</th><th>Lokasi</th><th>Stok</th><th>Satuan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="inventoryList"></tbody></table></div>
-      <div class="z-pagination"><span>Tampilkan <select><option>10</option><option>25</option><option>50</option></select> data</span><div><button disabled>‹</button><button class="active">1</button><button>2</button><button>3</button><button>…</button><button>28</button><button>›</button></div></div>
+      <div class="z-pagination"><span>Tampilkan <select id="pageSizeSelect"><option>10</option><option>25</option><option>50</option></select> data</span><div id="paginationButtons"></div></div>
     </section>
     <div class="z-brand-foot"><span>Z</span> ZEPPELIN</div>
   </main>
