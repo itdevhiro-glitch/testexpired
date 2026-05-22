@@ -19,63 +19,59 @@
 <p style="margin-top:15px; font-size:14px; font-weight:500;">Memuat Akses Marketing...</p>
 </div>
 <div id="main-content" style="display: none;">
-<nav class="navbar">
-<div class="nav-brand">
-<h1>Z-MARK PRO</h1>
-<span>Inventory System</span>
-</div>
-<div class="nav-actions">
-<button class="btn-nav btn-report" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i></button>
-<a class="btn-nav" href="dashboard.html"><i class="fa-solid fa-arrow-left"></i></a>
-</div>
-</nav>
-<div class="container">
-<div class="stats-container">
-<div class="stat-card">
-<div class="stat-icon bg-blue"><i class="fa-solid fa-box"></i></div>
-<div class="stat-info">
-<h3 id="statItems">0</h3> <p>Total Barang</p>
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon bg-orange"><i class="fa-solid fa-cubes"></i></div>
-<div class="stat-info">
-<h3 id="statStock">0</h3> <p>Total Stok</p>
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon bg-red"><i class="fa-solid fa-triangle-exclamation"></i></div>
-<div class="stat-info">
-<h3 id="statLow">0</h3> <p>Menipis</p>
-</div>
-</div>
-</div>
-<div class="toolbar">
-<div class="search-wrapper">
-<i class="fa-solid fa-search"></i>
-<input class="search-input" id="searchInput" placeholder="Cari barang atau SKU..." type="text"/>
-</div>
-<select class="filter-select" id="filterCategory">
-<option value="All">Semua Kategori</option>
-<option value="Kartu Nama">Kartu Nama</option>
-<option value="Cetak">Cetak &amp; Dokumen</option>
-<option value="Merchandise">Merchandise &amp; Souvenir</option>
-<option value="Display">Display &amp; Booth</option>
-<option value="Elektronik">Elektronik &amp; Gadget</option>
-<option value="Seragam">Seragam &amp; Pakaian</option>
-<option value="Stationery">Stationery (ATK)</option>
-<option value="Event">Perlengkapan Event</option>
-<option value="Lainnya">Lainnya</option>
-</select>
-</div>
-<div id="inventoryLoader" style="text-align:center; padding:40px;">
-<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gray); font-size:24px;"></i>
-</div>
-<div class="inventory-list" id="inventoryList"></div>
-</div>
-<button class="fab" onclick="window.openManageModal()">
-<i class="fa-solid fa-plus"></i>
-</button>
+<aside class="z-sidebar">
+  <div class="z-logo"><div class="z-logo-mark">Z</div><div><strong>ZEPPELIN</strong><span>WE CREATE SOLUTIONS</span></div></div>
+  <a class="z-side-link" href="dashboard.html"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+  <div class="z-side-title">Stock Marketing</div>
+  <a class="z-side-link active" href="mark.html"><i class="fa-solid fa-cube"></i> Z-MARK</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-layer-group"></i> Kategori</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-location-dot"></i> Lokasi</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-truck-field"></i> Supplier</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-tags"></i> Brand</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-ruler-combined"></i> Satuan</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-table-cells"></i> Rak</a>
+  <div class="z-side-title">Transaksi</div>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-box-archive"></i> Penerimaan</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-box-open"></i> Pengeluaran</a>
+  <a class="z-side-link" href="#"><i class="fa-solid fa-arrows-rotate"></i> Mutasi</a>
+  <div class="z-side-title">Laporan</div>
+  <a class="z-side-link" onclick="openModal('modalReport')"><i class="fa-solid fa-file-lines"></i> Laporan Stok</a>
+  <a class="z-side-link" onclick="generateExcel('monthly')"><i class="fa-solid fa-file-excel"></i> Export Excel</a>
+  <div class="z-side-footer">© 2026 Zeppelin</div>
+</aside>
+<section class="z-shell">
+  <nav class="z-topbar">
+    <div class="z-breadcrumb"><button class="z-menu-btn" id="zMenuBtn"><i class="fa-solid fa-bars"></i></button><span>›</span><b>Z-MARK</b></div>
+    <div class="z-profile"><button class="z-bell"><i class="fa-regular fa-bell"></i><span>3</span></button><div><strong>Admin Zmark</strong><small>Marketing</small></div><i class="fa-solid fa-chevron-down"></i></div>
+  </nav>
+  <main class="z-content">
+    <div class="z-page-head">
+      <div><h1>Z-MARK</h1><p>Stock Marketing / Gudang Marketing</p></div>
+      <div class="z-head-actions"><button class="z-btn ghost" onclick="openModal('modalReport')"><i class="fa-solid fa-filter"></i> Filter</button><button class="z-btn ghost danger" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i> Export</button><button class="z-btn primary" onclick="window.openManageModal()"><i class="fa-solid fa-plus"></i> Tambah Barang</button></div>
+    </div>
+    <div class="z-stats">
+      <div class="z-stat red"><span><i class="fa-solid fa-cube"></i></span><p>Total Barang</p><b id="statItems">0</b><small>Item</small></div>
+      <div class="z-stat orange"><span><i class="fa-solid fa-boxes-stacked"></i></span><p>Total Stok</p><b id="statStock">0</b><small>Pcs</small></div>
+      <div class="z-stat amber"><span><i class="fa-solid fa-layer-group"></i></span><p>Kategori</p><b id="statCategory">0</b><small>Kategori</small></div>
+      <div class="z-stat yellow"><span><i class="fa-solid fa-location-dot"></i></span><p>Lokasi</p><b id="statLocation">0</b><small>Lokasi</small></div>
+      <div class="z-stat soft"><span><i class="fa-regular fa-clipboard"></i></span><p>Stok Rendah</p><b id="statLow">0</b><small>Item</small></div>
+      <div class="z-stat soft"><span><i class="fa-regular fa-file-lines"></i></span><p>Tidak Ada Stok</p><b id="statEmpty">0</b><small>Item</small></div>
+    </div>
+    <section class="z-panel">
+      <div class="z-toolbar">
+        <div class="search-wrapper"><i class="fa-solid fa-search"></i><input class="search-input" id="searchInput" placeholder="Cari nama barang, kode, atau barcode..." type="text"/></div>
+        <select class="filter-select" id="filterCategory"><option value="All">Semua Kategori</option><option value="Kartu Nama">Kartu Nama</option><option value="Cetak">Cetak &amp; Dokumen</option><option value="Merchandise">Merchandise &amp; Souvenir</option><option value="Display">Display &amp; Booth</option><option value="Elektronik">Elektronik &amp; Gadget</option><option value="Seragam">Seragam &amp; Pakaian</option><option value="Stationery">Stationery (ATK)</option><option value="Event">Perlengkapan Event</option><option value="Lainnya">Lainnya</option></select>
+        <select class="filter-select" id="filterLocation"><option value="All">Semua Lokasi</option></select>
+        <select class="filter-select" id="filterStatus"><option value="All">Semua Status</option><option value="ok">Tersedia</option><option value="low">Stok Rendah</option><option value="empty">Habis</option></select>
+        <button class="z-reset" id="resetFilter">Reset</button>
+      </div>
+      <div id="inventoryLoader" class="z-loader"><i class="fa-solid fa-circle-notch fa-spin"></i> Memuat data...</div>
+      <div class="z-table-wrap"><table class="z-table"><thead><tr><th>No</th><th>Kode Barang</th><th>Nama Barang</th><th>Kategori</th><th>Lokasi</th><th>Stok</th><th>Satuan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="inventoryList"></tbody></table></div>
+      <div class="z-pagination"><span>Tampilkan <select><option>10</option><option>25</option><option>50</option></select> data</span><div><button disabled>‹</button><button class="active">1</button><button>2</button><button>3</button><button>…</button><button>28</button><button>›</button></div></div>
+    </section>
+    <div class="z-brand-foot"><span>Z</span> ZEPPELIN</div>
+  </main>
+</section>
 </div>
 <div class="modal-overlay" id="modalManage">
 <div class="modal-container">
