@@ -25,6 +25,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
         let pageSize = 10;
         let lastFiltered = [];
         let chooserType = 'OUT';
+        let activeView = { mode: 'inventory', field: null, value: null };
+        const fieldMap = {
+            category: { label: 'Kategori', key: 'kategori', icon: 'fa-layer-group' },
+            location: { label: 'Lokasi', key: 'lokasi', icon: 'fa-location-dot' },
+            supplier: { label: 'Supplier', key: 'supplier', icon: 'fa-truck-field' },
+            brand: { label: 'Brand', key: 'brand', icon: 'fa-tags' },
+            unit: { label: 'Satuan', key: 'satuan', icon: 'fa-ruler-combined' },
+            rack: { label: 'Rak', key: 'rak', icon: 'fa-table-cells' }
+        };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -73,6 +82,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
                 document.getElementById('filterCategory').value = 'All';
                 document.getElementById('filterLocation').value = 'All';
                 document.getElementById('filterStatus').value = 'All';
+                activeView = { mode: 'inventory', field: null, value: null };
+                updatePageTitle();
                 currentPage = 1;
                 renderList();
             });
@@ -121,12 +132,19 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
                 const matchFilter = filter === 'All' || item.kategori === filter;
                 const matchLoc = locFilter === 'All' || (item.lokasi || '-') === locFilter;
                 const matchStatus = statusFilter === 'All' || status === statusFilter;
-                return matchSearch && matchFilter && matchLoc && matchStatus;
+                const matchView = !activeView.field || String(item[fieldMap[activeView.field]?.key] || '-').trim() === activeView.value;
+                return matchSearch && matchFilter && matchLoc && matchStatus && matchView;
             });
         }
 
         function renderList() {
+            ensureFieldOverview();
+            updatePageTitle();
+            if (activeView.mode === 'field-overview') return renderFieldOverview(activeView.field);
             const listEl = document.getElementById('inventoryList');
+            document.querySelector('.z-table-wrap').classList.remove('hidden');
+            document.querySelector('.z-pagination').classList.remove('hidden');
+            document.getElementById('fieldOverview').classList.add('hidden');
             const filtered = getFilteredData();
             lastFiltered = filtered;
             const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -415,16 +433,109 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
             if (input) setTimeout(() => input.focus(), 350);
         };
 
+        function ensureFieldOverview() {
+            if (document.getElementById('fieldOverview')) return;
+            const panel = document.querySelector('.z-panel');
+            const div = document.createElement('div');
+            div.id = 'fieldOverview';
+            div.className = 'hidden';
+            const toolbar = document.querySelector('.z-toolbar');
+            panel.insertBefore(div, toolbar.nextSibling);
+        }
+
+        function setSidebarActive(type) {
+            document.querySelectorAll('.z-side-link').forEach(btn => btn.classList.remove('active'));
+            const btn = document.querySelector(`[data-zview="${type || 'inventory'}"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        function updatePageTitle() {
+            const h = document.querySelector('.z-page-head h1');
+            const p = document.querySelector('.z-page-head p');
+            if (!h || !p) return;
+            if (activeView.mode === 'field-overview') {
+                const cfg = fieldMap[activeView.field];
+                h.innerText = cfg ? cfg.label : 'Z-MARK';
+                p.innerText = cfg ? `Pilih ${cfg.label.toLowerCase()} untuk melihat seluruh barang di dalamnya.` : 'Stock Marketing / Gudang Marketing';
+                setSidebarActive(activeView.field);
+            } else if (activeView.field && activeView.value) {
+                const cfg = fieldMap[activeView.field];
+                h.innerText = `${cfg.label}: ${activeView.value}`;
+                p.innerText = `Menampilkan barang berdasarkan ${cfg.label.toLowerCase()} yang dipilih.`;
+                setSidebarActive(activeView.field);
+            } else {
+                h.innerText = 'Z-MARK';
+                p.innerText = 'Stock Marketing / Gudang Marketing';
+                setSidebarActive('inventory');
+            }
+        }
+
+        function renderFieldOverview(type) {
+            const cfg = fieldMap[type];
+            if (!cfg) return;
+            const box = document.getElementById('fieldOverview');
+            const table = document.querySelector('.z-table-wrap');
+            const paging = document.querySelector('.z-pagination');
+            if (table) table.classList.add('hidden');
+            if (paging) paging.classList.add('hidden');
+            box.classList.remove('hidden');
+
+            const groups = new Map();
+            allData.forEach(item => {
+                const value = String(item[cfg.key] || '-').trim() || '-';
+                if (!groups.has(value)) groups.set(value, { count: 0, stock: 0, low: 0 });
+                const g = groups.get(value);
+                g.count += 1;
+                g.stock += Number(item.stok || 0);
+                if (Number(item.stok || 0) > 0 && Number(item.stok || 0) < 10) g.low += 1;
+            });
+            const rows = [...groups.entries()].sort((a,b) => a[0].localeCompare(b[0]));
+            if (!rows.length) {
+                box.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open fa-2x"></i><p>Belum ada data ${safeText(cfg.label.toLowerCase())}.</p></div>`;
+                return;
+            }
+            box.innerHTML = `
+                <div class="z-field-head">
+                    <button type="button" class="z-btn" onclick="window.backToInventory()"><i class="fa-solid fa-arrow-left"></i> Semua Barang</button>
+                    <b>${rows.length} ${safeText(cfg.label)} ditemukan</b>
+                </div>
+                <div class="z-field-grid">
+                    ${rows.map(([value,g]) => `
+                        <button type="button" class="z-field-card" onclick="window.openFieldValue('${type}', '${String(value).replace(/'/g, "\\'")}')">
+                            <span><i class="fa-solid ${cfg.icon}"></i></span>
+                            <strong>${safeText(value)}</strong>
+                            <small>${g.count} barang • stok ${g.stock.toLocaleString('id-ID')} • rendah ${g.low}</small>
+                        </button>`).join('')}
+                </div>`;
+        }
+
+        window.backToInventory = () => {
+            activeView = { mode: 'inventory', field: null, value: null };
+            currentPage = 1;
+            renderList();
+            closeMobileSidebar();
+        };
+
+        window.openFieldValue = (type, value) => {
+            activeView = { mode: 'field-list', field: type, value: String(value) };
+            currentPage = 1;
+            renderList();
+        };
+
         window.quickFilter = (type) => {
             closeMobileSidebar();
-            if (type === 'category') return document.getElementById('filterCategory').focus();
-            if (type === 'location' || type === 'rack') return document.getElementById('filterLocation').focus();
-            if (type === 'unit') return showInfo('Daftar Satuan', [...new Set(allData.map(i => i.satuan || 'Pcs'))].map(u => `<div class="history-item"><b>${safeText(u)}</b></div>`).join('') || '<p>Belum ada data satuan.</p>');
+            activeView = { mode: 'field-overview', field: type, value: null };
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterCategory').value = 'All';
+            document.getElementById('filterLocation').value = 'All';
+            document.getElementById('filterStatus').value = 'All';
+            currentPage = 1;
+            renderList();
         };
 
         window.openMasterInfo = (title) => {
-            closeMobileSidebar();
-            showInfo(title, `<p style="margin-top:0;color:#64748b">Field ${title} belum ada di struktur data Z-MARK saat ini. Tombol ini tidak lagi mati: dipakai sebagai informasi master, dan bisa dikembangkan menjadi CRUD kalau field ${title} sudah ditambahkan.</p>`);
+            const map = { Supplier: 'supplier', Brand: 'brand' };
+            window.quickFilter(map[title] || 'category');
         };
 
         function showInfo(title, html) {
