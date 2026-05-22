@@ -12,7 +12,7 @@
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 
 <link href="../assets/css/mark.css" rel="stylesheet"/><link rel="stylesheet" href="../assets/css/system-expiry.css">
-<link rel="stylesheet" href="../assets/css/zeppelin-clean-modern.css">
+<link rel="stylesheet" href="../assets/css/pro-enhance.css">
 </head>
 <body>
 <div class="loading-screen" id="loading-screen">
@@ -20,37 +20,18 @@
 <p style="margin-top:15px; font-size:14px; font-weight:500;">Memuat Akses Marketing...</p>
 </div>
 <div id="main-content" style="display: none;">
-<nav class="navbar zmark-topbar">
-<div class="nav-brand zmark-brand">
-<div class="brand-mark"><i class="fa-solid fa-chart-simple"></i></div>
-<div>
-<h1>Z-MARK</h1>
-<span>Stock Marketing • Zeppelin</span>
-</div>
-</div>
-<div class="zmark-nav-links">
-<button class="zmark-nav-link" data-scroll="overviewSection"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></button>
-<button class="zmark-nav-link" data-scroll="inventorySection"><i class="fa-solid fa-boxes-stacked"></i><span>Stock</span></button>
-<button class="zmark-nav-link" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i><span>Export</span></button>
+<nav class="navbar">
+<div class="nav-brand">
+<h1>Z-MARK PRO</h1>
+<span>Inventory System</span>
 </div>
 <div class="nav-actions">
-<button class="btn-nav btn-report" onclick="openModal('modalReport')" title="Export Data"><i class="fa-solid fa-file-export"></i></button>
-<a class="btn-nav" href="dashboard.html" title="Kembali ke Dashboard"><i class="fa-solid fa-arrow-left"></i></a>
+<button class="btn-nav btn-report" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i></button>
+<a class="btn-nav" href="dashboard.html"><i class="fa-solid fa-arrow-left"></i></a>
 </div>
 </nav>
-<div class="container zmark-page">
-<section class="zmark-hero" id="overviewSection">
-<div class="zmark-hero-copy">
-<span class="zmark-eyebrow"><i class="fa-solid fa-sparkles"></i> Marketing Inventory Center</span>
-<h2>Kelola stock marketing lebih rapi, cepat, dan mudah dibaca.</h2>
-<p>Dashboard ini dibuat supaya data barang banyak tetap nyaman dipantau: status stok, kategori, pencarian, restock, pemakaian, dan export laporan dalam satu halaman.</p>
-</div>
-<div class="zmark-hero-actions">
-<button class="hero-btn hero-btn-primary" onclick="window.openManageModal()"><i class="fa-solid fa-plus"></i> Tambah Barang</button>
-<button class="hero-btn hero-btn-light" onclick="openModal('modalReport')"><i class="fa-solid fa-file-arrow-down"></i> Export</button>
-</div>
-</section>
-<div class="stats-container zmark-stats">
+<div class="container">
+<div class="stats-container">
 <div class="stat-card">
 <div class="stat-icon bg-blue"><i class="fa-solid fa-box"></i></div>
 <div class="stat-info">
@@ -69,30 +50,6 @@
 <h3 id="statLow">0</h3> <p>Menipis</p>
 </div>
 </div>
-<div class="stat-card">
-<div class="stat-icon bg-purple"><i class="fa-solid fa-layer-group"></i></div>
-<div class="stat-info">
-<h3 id="statCategories">0</h3> <p>Kategori Aktif</p>
-</div>
-</div>
-</div>
-<section class="zmark-dashboard-panel">
-<div class="zmark-section-head">
-<div>
-<span class="section-kicker">Ringkasan Kategori</span>
-<h3>Dashboard Stock Marketing</h3>
-</div>
-<button class="mini-action" onclick="document.getElementById('filterCategory').value='All'; renderList(); document.getElementById('inventorySection').scrollIntoView({behavior:'smooth'});"><i class="fa-solid fa-list"></i> Lihat Semua</button>
-</div>
-<div class="category-overview" id="categoryOverview"></div>
-</section>
-<section class="inventory-panel" id="inventorySection">
-<div class="zmark-section-head inventory-head">
-<div>
-<span class="section-kicker">Daftar Barang</span>
-<h3>Stock Inventory</h3>
-</div>
-<span class="result-pill" id="resultCount">0 data</span>
 </div>
 <div class="toolbar">
 <div class="search-wrapper">
@@ -116,7 +73,6 @@
 <i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gray); font-size:24px;"></i>
 </div>
 <div class="inventory-list" id="inventoryList"></div>
-</section>
 </div>
 <button class="fab" onclick="window.openManageModal()">
 <i class="fa-solid fa-plus"></i>
@@ -267,5 +223,6 @@
 </div>
 <script src="../assets/js/mark.js" type="module"></script>
 <script defer src="../assets/js/system-expiry.js"></script>
+<script defer src="../assets/js/pro-enhance.js"></script>
 </body>
 </html>

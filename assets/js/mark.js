@@ -57,19 +57,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
                     }
                 }
                 updateStats();
-                renderCategoryOverview();
                 renderList();
             });
 
             document.getElementById('searchInput').addEventListener('input', renderList);
             document.getElementById('filterCategory').addEventListener('change', renderList);
-
-            document.querySelectorAll('[data-scroll]').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const target = document.getElementById(btn.dataset.scroll);
-                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                });
-            });
         }
 
         function getIcon(cat) {
@@ -93,18 +85,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
             const filter = document.getElementById('filterCategory').value;
 
             const filtered = allData.filter(item => {
-                const matchSearch = (item.nama || '').toLowerCase().includes(search) || (item.sku || '').toLowerCase().includes(search);
+                const matchSearch = item.nama.toLowerCase().includes(search) || (item.sku || '').toLowerCase().includes(search);
                 const matchFilter = filter === 'All' || item.kategori === filter;
                 return matchSearch && matchFilter;
-            }).sort((a, b) => {
-                const lowA = Number(a.stok || 0) < 5 ? 0 : 1;
-                const lowB = Number(b.stok || 0) < 5 ? 0 : 1;
-                if (lowA !== lowB) return lowA - lowB;
-                return (a.nama || '').localeCompare(b.nama || '');
             });
-
-            const resultCount = document.getElementById('resultCount');
-            if (resultCount) resultCount.innerText = `${filtered.length} data`;
 
             listEl.innerHTML = '';
             if (filtered.length === 0) {
@@ -157,61 +141,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
         function updateStats() {
             const total = allData.length;
             const stock = allData.reduce((a, b) => a + Number(b.stok || 0), 0);
-            const low = allData.filter(i => Number(i.stok || 0) < 5).length;
-            const categories = new Set(allData.map(i => i.kategori).filter(Boolean)).size;
+            const low = allData.filter(i => i.stok < 5).length;
             
             document.getElementById('statItems').innerText = total;
             document.getElementById('statStock').innerText = stock;
             document.getElementById('statLow').innerText = low;
-            const statCategories = document.getElementById('statCategories');
-            if (statCategories) statCategories.innerText = categories;
         }
-
-        function renderCategoryOverview() {
-            const el = document.getElementById('categoryOverview');
-            if (!el) return;
-
-            const groups = {};
-            allData.forEach(item => {
-                const key = item.kategori || 'Lainnya';
-                if (!groups[key]) groups[key] = { count: 0, stock: 0, low: 0 };
-                groups[key].count += 1;
-                groups[key].stock += Number(item.stok || 0);
-                if (Number(item.stok || 0) < 5) groups[key].low += 1;
-            });
-
-            const entries = Object.entries(groups).sort((a, b) => b[1].low - a[1].low || b[1].count - a[1].count);
-            if (entries.length === 0) {
-                el.innerHTML = `<div class="empty-state" style="grid-column:1/-1; padding:24px;"><i class="fa-regular fa-folder-open fa-2x"></i><p>Belum ada data stock marketing.</p></div>`;
-                return;
-            }
-
-            el.innerHTML = entries.map(([cat, info]) => {
-                const lowText = info.low > 0 ? `${info.low} menipis` : 'stok aman';
-                return `
-                    <button class="category-card" onclick="window.filterByCategory('${cat.replace(/'/g, "\\'")}')">
-                        <div class="category-card-top">
-                            <div class="category-icon"><i class="${getIcon(cat)}"></i></div>
-                            <span class="category-count">${info.count}</span>
-                        </div>
-                        <div>
-                            <div class="category-name">${cat}</div>
-                            <div class="category-stock">${info.stock} total stock • ${lowText}</div>
-                        </div>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        window.filterByCategory = (cat) => {
-            const filter = document.getElementById('filterCategory');
-            if (filter) filter.value = cat;
-            renderList();
-            const section = document.getElementById('inventorySection');
-            if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        };
-
-        window.renderList = renderList;
 
         window.openManageModal = () => window.openManage();
 
