@@ -34,16 +34,16 @@
     var wrapper = document.createElement('section');
     wrapper.className = 'system-expiry-notice';
     wrapper.setAttribute('role', 'status');
-    wrapper.setAttribute('aria-label', 'Informasi masa aktif sistem');
+    wrapper.setAttribute('aria-label', 'Informasi masa aktif web');
     wrapper.innerHTML =
       '<div class="system-expiry-notice__inner">' +
         '<div>' +
-          '<h3 class="system-expiry-notice__title">Pemberitahuan Masa Aktif Sistem</h3>' +
-          '<p class="system-expiry-notice__text">Masa aktif web ini berlaku sampai <span class="system-expiry-notice__date">' + escapeHtml(CONFIG.displayDate) + '</span>. Setelah tanggal tersebut, akses sistem akan dikunci otomatis. Untuk informasi lebih lanjut hubungi <strong>' + escapeHtml(CONFIG.phoneText) + '</strong>.</p>' +
+          '<h3 class="system-expiry-notice__title">Info Masa Aktif Web</h3>' +
+          '<p class="system-expiry-notice__text">Web ini aktif sampai <span class="system-expiry-notice__date">' + escapeHtml(CONFIG.displayDate) + '</span>. Setelah tanggal itu, web akan istirahat dulu dan otomatis terkunci. Info lanjut hubungi <strong>' + escapeHtml(CONFIG.phoneText) + '</strong>.</p>' +
         '</div>' +
         '<div class="system-expiry-notice__actions">' +
           '<span class="system-expiry-notice__badge">Sisa ' + daysLeft + ' hari</span>' +
-          '<a class="system-expiry-notice__wa" href="' + CONFIG.waUrl + '" target="_blank" rel="noopener">Hubungi WA</a>' +
+          '<a class="system-expiry-notice__wa" href="' + CONFIG.waUrl + '" target="_blank" rel="noopener">Chat WA</a>' +
         '</div>' +
       '</div>';
     return wrapper;
@@ -54,15 +54,30 @@
     overlay.className = 'system-expiry-lock';
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'Akses sistem dikunci');
+    overlay.setAttribute('aria-label', 'Web sedang terkunci');
     overlay.innerHTML =
+      '<div class="system-expiry-float system-expiry-float--one">🐾</div>' +
+      '<div class="system-expiry-float system-expiry-float--two">✨</div>' +
+      '<div class="system-expiry-float system-expiry-float--three">💤</div>' +
       '<div class="system-expiry-lock__card">' +
-        '<div class="system-expiry-lock__eyebrow">System Access Locked</div>' +
-        '<h1>Masa Aktif Sistem Telah Berakhir</h1>' +
-        '<p>Web ini sudah melewati masa aktif pada <span class="system-expiry-lock__date">' + escapeHtml(CONFIG.displayDate) + '</span>. Akses ke halaman dan fitur sistem telah dinonaktifkan secara otomatis.</p>' +
-        '<p>Silakan hubungi administrator untuk informasi lanjutan, aktivasi ulang, atau kebutuhan operasional lainnya.</p>' +
-        '<a class="system-lock__wa" href="' + CONFIG.waUrl + '" target="_blank" rel="noopener">Hubungi WhatsApp ' + escapeHtml(CONFIG.phoneText) + '</a>' +
-        '<p class="system-expiry-lock__note">Restricted system. Unauthorized access is not permitted.</p>' +
+        '<div class="system-expiry-lock__cat" aria-hidden="true">' +
+          '<div class="cat-ear cat-ear--left"></div>' +
+          '<div class="cat-ear cat-ear--right"></div>' +
+          '<div class="cat-face">' +
+            '<div class="cat-eye cat-eye--left"></div>' +
+            '<div class="cat-eye cat-eye--right"></div>' +
+            '<div class="cat-nose"></div>' +
+            '<div class="cat-mouth">ω</div>' +
+            '<div class="cat-whisker cat-whisker--left">≋</div>' +
+            '<div class="cat-whisker cat-whisker--right">≋</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="system-expiry-lock__eyebrow">Meong, webnya lagi bobok</div>' +
+        '<h1>Web Ini Lagi Istirahat Dulu 😺</h1>' +
+        '<p>Meongmin mendeteksi masa aktif web sudah selesai pada <span class="system-expiry-lock__date">' + escapeHtml(CONFIG.displayDate) + '</span>.</p>' +
+        '<p>Jadi halaman ini dikunci otomatis biar datanya aman dan kucingnya bisa rebahan dengan tenang.</p>' +
+        '<a class="system-lock__wa" href="' + CONFIG.waUrl + '" target="_blank" rel="noopener">🐱 Chat Admin di WhatsApp</a>' +
+        '<p class="system-expiry-lock__note">Butuh akses lagi? Hubungi <strong>' + escapeHtml(CONFIG.phoneText) + '</strong>. Jangan lupa kasih ikan virtual buat kucingnya.</p>' +
       '</div>';
     return overlay;
   }
