@@ -22,26 +22,22 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
         let selectedId = null;
         let transType = 'OUT';
 
+        let appStarted = false;
+
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const userRef = ref(db, 'users/' + user.uid);
-                get(userRef).then((snap) => {
-                    const u = snap.val();
-                    const isAllowed = u && (u.departemen === 'Marketing' || u.departemen === 'Pemasaran' || user.email === 'root@zeppelin.center');
-                    
-                    if (isAllowed) {
-                        document.getElementById('loading-screen').classList.add('hidden');
-                        document.getElementById('main-content').style.display = 'block';
-                        initApp();
-                    } else {
-                        alert("AKSES DITOLAK: Halaman ini khusus Departemen Marketing!");
-                        window.location.replace('dashboard.html');
-                    }
-                }).catch(() => {
-                    window.location.replace('login.html');
-                });
-            } else {
-                window.location.replace('login.html');
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Z-MARK tidak boleh menendang user ke dashboard/logout karena field departemen berbeda/kosong.
+            // Selama user sudah login, halaman dibuka normal. Validasi akses tetap mengikuti Firebase Rules.
+            document.getElementById('loading-screen').classList.add('hidden');
+            document.getElementById('main-content').style.display = 'block';
+
+            if (!appStarted) {
+                appStarted = true;
+                initApp();
             }
         });
 
@@ -79,63 +75,69 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
             return icons[cat] || 'fa-solid fa-box';
         }
 
+        function safeText(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, (ch) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[ch]));
+        }
+
         function renderList() {
             const listEl = document.getElementById('inventoryList');
-            const search = document.getElementById('searchInput').value.toLowerCase();
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
             const filter = document.getElementById('filterCategory').value;
 
             const filtered = allData.filter(item => {
-                const matchSearch = item.nama.toLowerCase().includes(search) || (item.sku || '').toLowerCase().includes(search);
-                const matchFilter = filter === 'All' || item.kategori === filter;
+                const nama = String(item.nama || '').toLowerCase();
+                const sku = String(item.sku || '').toLowerCase();
+                const kategori = String(item.kategori || 'Lainnya');
+                const matchSearch = !search || nama.includes(search) || sku.includes(search);
+                const matchFilter = filter === 'All' || kategori === filter;
                 return matchSearch && matchFilter;
             });
 
-            listEl.innerHTML = '';
             if (filtered.length === 0) {
                 listEl.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open fa-2x"></i><p>Tidak ada barang ditemukan.</p></div>`;
                 return;
             }
 
-            filtered.forEach(item => {
-                const isLow = item.stok < 5;
+            const rows = filtered.map(item => {
+                const stok = Number(item.stok || 0);
+                const isLow = stok < 5;
+                const unit = item.satuan || 'Pcs';
                 const badge = isLow ? `<span class="stock-badge badge-low">Menipis</span>` : `<span class="stock-badge badge-ok">Aman</span>`;
                 const icon = getIcon(item.kategori);
-                const unit = item.satuan || 'Pcs';
+                return `
+                    <div class="inventory-row">
+                        <div class="inv-col inv-item">
+                            <div class="item-icon"><i class="${icon}"></i></div>
+                            <div class="item-main">
+                                <strong>${safeText(item.nama || 'Tanpa Nama')}</strong>
+                                <span>${safeText(item.sku || 'Tanpa SKU')}</span>
+                            </div>
+                        </div>
+                        <div class="inv-col inv-category"><span>${safeText(item.kategori || 'Lainnya')}</span></div>
+                        <div class="inv-col inv-location"><span>${safeText(item.lokasi || '-')}</span></div>
+                        <div class="inv-col inv-stock"><b>${stok}</b><small>${safeText(unit)}</small>${badge}</div>
+                        <div class="inv-col inv-actions">
+                            <button type="button" class="btn-mini btn-out" onclick="window.openTrans('${item.id}', 'OUT')"><i class="fa-solid fa-minus"></i> Pakai</button>
+                            <button type="button" class="btn-mini btn-in" onclick="window.openTrans('${item.id}', 'IN')"><i class="fa-solid fa-plus"></i> Restock</button>
+                            <button type="button" class="btn-icon" title="Riwayat" onclick="window.openHistory('${item.id}')"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                            <button type="button" class="btn-icon" title="Edit" onclick="window.openManage('${item.id}')"><i class="fa-solid fa-pen"></i></button>
+                        </div>
+                    </div>`;
+            }).join('');
 
-                listEl.innerHTML += `
-                    <div class="card">
-                        <button class="btn-history-abs" onclick="window.openHistory('${item.id}')"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                        <button class="btn-edit-abs" onclick="window.openManage('${item.id}')"><i class="fa-solid fa-pen"></i></button>
-                        
-                        <div class="card-body">
-                            <div class="card-icon"><i class="${icon}"></i></div>
-                            <div class="card-content">
-                                <h3 class="card-title">${item.nama}</h3>
-                                ${item.sku ? `<span class="card-sku">${item.sku}</span>` : ''}
-                                <div class="card-meta">
-                                    <span>${item.kategori}</span>
-                                    ${item.lokasi ? `<span>• Rak ${item.lokasi}</span>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stock-indicator">
-                            <span style="font-size:12px; color:var(--gray);">Stok Tersedia</span>
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <span class="stock-val">${item.stok} ${unit}</span>
-                                ${badge}
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn-act btn-act-out" onclick="window.openTrans('${item.id}', 'OUT')">
-                                <i class="fa-solid fa-minus"></i> Pakai
-                            </button>
-                            <button class="btn-act btn-act-in" onclick="window.openTrans('${item.id}', 'IN')">
-                                <i class="fa-solid fa-plus"></i> Restock
-                            </button>
-                        </div>
+            listEl.innerHTML = `
+                <div class="inventory-panel">
+                    <div class="inventory-head">
+                        <div>Barang</div>
+                        <div>Kategori</div>
+                        <div>Lokasi</div>
+                        <div>Stok</div>
+                        <div>Aksi</div>
                     </div>
-                `;
-            });
+                    ${rows}
+                </div>`;
         }
 
         function updateStats() {

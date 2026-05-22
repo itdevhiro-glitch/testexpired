@@ -40,11 +40,11 @@
   }
 
   function isNoticeHidden() {
-    return storageGet(CONFIG.storageKey) === '1';
+    // Notice harus muncul lagi setiap pindah halaman, jadi tidak pakai localStorage permanen.
+    return false;
   }
 
   function hideNotice() {
-    storageSet(CONFIG.storageKey, '1');
     var notice = document.querySelector('.system-expiry-notice');
     if (notice) {
       notice.classList.add('is-hiding');
