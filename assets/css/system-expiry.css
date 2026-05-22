@@ -113,3 +113,7 @@ body.system-expired > *:not(.system-expiry-lock){pointer-events:none !important;
 @keyframes cardPop{from{opacity:0;transform:translateY(18px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
 @media (max-width:720px){.system-expiry-notice{top:10px;padding:13px 14px;border-radius:14px;}.system-expiry-notice__inner{align-items:flex-start;flex-direction:column;gap:12px;}.system-expiry-notice__actions{width:100%;justify-content:space-between;}.system-expiry-notice__wa{flex:1;}.system-expiry-lock__card{padding:34px 20px;border-radius:26px;}.system-expiry-float{font-size:30px;}.system-expiry-lock__cat{width:132px;height:112px}.cat-face{width:118px;height:95px}}
 @media (prefers-reduced-motion:reduce){.system-expiry-lock:before,.system-expiry-lock__card,.system-expiry-lock__cat,.cat-eye,.system-expiry-float{animation:none !important;}}
+
+/* Notice dibuat non-blocking agar tidak mengganggu klik/login */
+.system-expiry-notice{pointer-events:none;}
+.system-expiry-notice a,.system-expiry-notice button{pointer-events:auto;}

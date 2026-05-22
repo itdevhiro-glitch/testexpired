@@ -19,7 +19,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
         };
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                if (user.email === 'root@zeppelin.center') window.location.href = '../index.html';
+                if (user.email === 'root@zeppelin.center') window.location.href = 'dashboard.html';
                 else {
                     get(ref(db, 'users/' + user.uid)).then((snap) => {
                         if (snap.exists() && snap.val().status === 'approved') window.location.href = 'dashboard.html';
@@ -44,7 +44,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
                 const userCredential = await signInWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
                 if (user.email === 'root@zeppelin.center') {
-                    window.location.href = '../index.html';
+                    window.location.href = 'dashboard.html';
                     return;
                 }
                 const snapshot = await get(ref(db, 'users/' + user.uid));
