@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HR Portal - Zeppelin CMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet"/>
+
+<link href="../assets/css/content-management.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div class="loading-screen" id="loading-screen">
+<div class="spinner"></div>
+<p>Memuat Sistem HRD...</p>
+</div>
+<div id="main-content">
+<nav class="sidebar">
+<a class="brand" href="#"><i class="fa-solid fa-rocket"></i> ZEPPELIN</a>
+<div class="nav-group">
+<div class="nav-label">Menu Utama</div>
+<div class="nav-link active" onclick="switchTab('announcement')">
+<i class="fa-solid fa-bullhorn"></i> Pengumuman
+                </div>
+<div class="nav-link" onclick="switchTab('employee')">
+<i class="fa-solid fa-users"></i> Data Karyawan
+                </div>
+</div>
+<div class="nav-group">
+<div class="nav-label">Lainnya</div>
+<a class="nav-link" href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Kembali ke Dashboard</a>
+</div>
+</nav>
+<main class="main-panel">
+<div class="top-bar">
+<div class="page-title">
+<span style="color: var(--text-grey); font-size: 0.9rem;">Human Resources /</span>
+<h2 id="page-heading">Manajemen Konten</h2>
+</div>
+<div style="display:flex; align-items:center; gap:15px;">
+<div style="text-align:right;">
+<div id="user-display-name" style="font-weight:600; font-size:0.9rem;">HR User</div>
+<div style="font-size:0.75rem; color:var(--text-grey);">HRD Department</div>
+</div>
+<button class="btn-logout" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i></button>
+</div>
+</div>
+<div class="msg-box" id="global-msg"></div>
+<div class="content-view" id="view-announcement">
+<div class="card">
+<div class="card-header">
+<h3>Daftar Pengumuman</h3>
+<button class="btn-primary" onclick="openCreateModal()">
+<i class="fa-solid fa-plus"></i> Buat Baru
+                        </button>
+</div>
+<div id="announcement-list">
+<div style="text-align: center; color: #999; padding: 40px;">Memuat data...</div>
+</div>
+</div>
+</div>
+<div class="content-view hidden" id="view-employee">
+<div class="card">
+<div class="card-header">
+<div>
+<h3>Direktori Karyawan</h3>
+<p style="font-size:0.85rem; color:var(--text-grey);">Kelola data dan permintaan akses akun baru.</p>
+</div>
+<button class="btn-primary" onclick="openEmpModal(null)">
+<i class="fa-solid fa-user-plus"></i> Tambah Karyawan
+                        </button>
+</div>
+<div style="padding: 15px; background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; color: #b45309;">
+<i class="fa-solid fa-circle-info"></i> <b>Catatan Sistem:</b> Penambahan karyawan baru akan berstatus <b>Pending</b> sampai Admin IT menyetujui dan membuatkan kredensial login di Dashboard Utama.
+                    </div>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Nama Lengkap</th>
+<th>Email / Akun</th>
+<th>Departemen</th>
+<th>Jabatan</th>
+<th>Status Akun</th>
+<th style="text-align:center;">Aksi</th>
+</tr>
+</thead>
+<tbody id="employee-list">
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+<div class="modal-overlay" id="create-modal">
+<div class="modal-content">
+<form id="create-form" style="display: flex; flex-direction: column; height: 100%;">
+<div class="modal-header">
+<h3 class="modal-title">Buat Pengumuman Baru</h3>
+<button onclick="closeModal('create-modal')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;" type="button"><i class="fa-solid fa-times"></i></button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label class="form-label">Judul Pengumuman</label>
+<input class="form-control" id="ann-title" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Isi Konten</label>
+<div class="editor-wrapper">
+<div id="quill-editor-container"></div>
+</div>
+</div>
+<div class="row-group">
+<div class="form-group col-half">
+<label class="form-label">Kategori</label>
+<select class="form-control" id="ann-category">
+<option value="Umum">Umum</option>
+<option value="Penting">Penting</option>
+<option value="Event">Event</option>
+<option value="Peraturan">Peraturan</option>
+</select>
+</div>
+<div class="form-group col-half">
+<label class="form-label">Berakhir (Opsional)</label>
+<input class="form-control" id="ann-expiry" type="date"/>
+</div>
+</div>
+</div>
+<div class="modal-footer">
+<div style="flex:1; display:flex; align-items:center; gap:10px;">
+<input id="ann-pin" type="checkbox"/> <label for="ann-pin">Pin di Atas</label>
+</div>
+<button class="btn-cancel" onclick="closeModal('create-modal')" type="button">Batal</button>
+<button class="btn-submit" id="submit-create-btn" type="submit">Publikasikan</button>
+</div>
+</form>
+</div>
+</div>
+<div class="modal-overlay" id="edit-modal">
+<div class="modal-content">
+<form id="edit-form" style="display: flex; flex-direction: column; height: 100%;">
+<input id="edit-id" type="hidden"/>
+<div class="modal-header">
+<h3 class="modal-title">Edit Pengumuman</h3>
+<button onclick="closeModal('edit-modal')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;" type="button"><i class="fa-solid fa-times"></i></button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label class="form-label">Judul Pengumuman</label>
+<input class="form-control" id="edit-title" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Isi Konten</label>
+<div class="editor-wrapper">
+<div id="quill-editor-container-edit"></div>
+</div>
+</div>
+<div class="row-group">
+<div class="form-group col-half">
+<label class="form-label">Kategori</label>
+<select class="form-control" id="edit-category">
+<option value="Umum">Umum</option>
+<option value="Penting">Penting</option>
+<option value="Event">Event</option>
+</select>
+</div>
+<div class="form-group col-half">
+<label class="form-label">Berakhir</label>
+<input class="form-control" id="edit-expiry" type="date"/>
+</div>
+</div>
+</div>
+<div class="modal-footer">
+<div style="flex:1; display:flex; align-items:center; gap:10px;">
+<input id="edit-pin" type="checkbox"/> <label for="edit-pin">Pin di Atas</label>
+</div>
+<button class="btn-cancel" onclick="closeModal('edit-modal')" type="button">Batal</button>
+<button class="btn-submit" id="save-edit-btn" type="submit">Simpan</button>
+</div>
+</form>
+</div>
+</div>
+<div class="modal-overlay" id="emp-modal">
+<div class="modal-content" style="max-width: 500px;">
+<div class="modal-header">
+<h3 class="modal-title" id="emp-modal-title">Tambah Karyawan</h3>
+<button onclick="closeModal('emp-modal')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;" type="button"><i class="fa-solid fa-times"></i></button>
+</div>
+<form id="emp-form" style="display: flex; flex-direction: column; flex:1; overflow:hidden;">
+<input id="emp-uid" type="hidden"/>
+<div class="modal-body">
+<div class="form-group">
+<label class="form-label">Nama Lengkap</label>
+<input class="form-control" id="emp-name" placeholder="Contoh: Budi Santoso" required="" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Email Perusahaan</label>
+<input class="form-control" id="emp-email" placeholder="user@zeppelin.center" required="" type="email"/>
+<small style="color:var(--text-grey); font-size:0.75rem;">Email ini akan digunakan untuk login setelah disetujui IT.</small>
+</div>
+<div class="row-group">
+<div class="form-group col-half">
+<label class="form-label">Departemen</label>
+<select class="form-control" id="emp-dept" required="">
+<option value="">-- Pilih --</option>
+<option value="HRD">Human Resources</option>
+<option value="Finance">Finance / Accounting</option>
+<option value="Marketing">Marketing</option>
+<option value="Operational">Operational</option>
+<option value="IT">IT Support</option>
+</select>
+</div>
+<div class="form-group col-half">
+<label class="form-label">Jabatan (Job Title)</label>
+<input class="form-control" id="emp-job" placeholder="Staff" type="text"/>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label">NIK (Nomor Induk Karyawan)</label>
+<input class="form-control" id="emp-nik" placeholder="Opsional" type="text"/>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn-cancel" onclick="closeModal('emp-modal')" type="button">Batal</button>
+<button class="btn-submit" id="btn-save-emp" type="submit">Simpan Data</button>
+</div>
+</form>
+</div>
+</div>
+<div class="modal-overlay" id="delete-modal">
+<div class="modal-content" style="max-width: 400px;">
+<div class="modal-header" style="border:none; padding-bottom: 0;">
+<h3 style="color: var(--primary);">Hapus Data?</h3>
+</div>
+<div class="modal-body" style="text-align: center; padding: 20px 30px;">
+<p style="color: var(--text-grey);">Data ini akan dihapus permanen dan tidak dapat dikembalikan.</p>
+</div>
+<div class="modal-footer" style="justify-content: flex-end; border: none; background: white;">
+<button class="btn-cancel" onclick="closeModal('delete-modal')" style="margin-right: 10px;">Batal</button>
+<button class="btn-submit" id="confirm-delete-btn" style="background: var(--primary);">Ya, Hapus</button>
+</div>
+</div>
+</div>
+<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<script src="../assets/js/content-management.js" type="module"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Zeppelin - Surat Pengajuan Lembur</title>
+<!-- Google Font + FontAwesome -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<!-- jsPDF + AutoTable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<link href="../assets/css/lembur.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div class="loading-screen" id="loading-screen">
+<div class="spinner"></div>
+<p>Memuat halaman lembur...</p>
+</div>
+<nav class="navbar">
+<div class="nav-container">
+<a class="logo" href="dashboard.html">
+<i class="fa-solid fa-file-signature"></i>
+        ZEPPELIN
+      </a>
+<div class="nav-right">Overtime Request PDF Generator</div>
+</div>
+</nav>
+<div class="container">
+<h1 class="title">Generator <span>Surat Pengajuan Lembur</span></h1>
+<p class="subtitle">
+      Isi form di bawah, lalu klik <b>Generate PDF</b> untuk membuat surat pengajuan lembur kerja
+      dalam format profesional.
+    </p>
+<!-- INFORMASI PERUSAHAAN -->
+<div class="card">
+<div class="section-title">Informasi Perusahaan</div>
+<div class="grid">
+<div>
+<label>Nama Perusahaan</label>
+<input id="companyName" placeholder="PT. Contoh Sejahtera" type="text"/>
+</div>
+<div>
+<label>Logo Perusahaan (Opsional)</label>
+<input accept="image/*" id="logoUpload" type="file"/>
+<div class="hint">Upload logo untuk kop surat PDF (PNG/JPG).</div>
+</div>
+</div>
+<div style="margin-top:16px;">
+<label>Alamat Perusahaan</label>
+<textarea id="companyAddress" placeholder="Jl. Mawar No. 10, Jakarta" rows="3"></textarea>
+</div>
+</div>
+<!-- DATA KARYAWAN -->
+<div class="card">
+<div class="section-title">Data Karyawan</div>
+<div class="grid">
+<div>
+<label>Nama Karyawan</label>
+<input id="employeeName" placeholder="Nama lengkap" type="text"/>
+</div>
+<div>
+<label>Jabatan / Divisi</label>
+<input id="employeePosition" placeholder="IT Support / Finance / Staff" type="text"/>
+</div>
+<div>
+<label>Departemen (Opsional)</label>
+<input id="employeeDepartment" placeholder="IT Department" type="text"/>
+</div>
+</div>
+</div>
+<!-- DETAIL LEMBUR -->
+<div class="card">
+<div class="section-title">Detail Lembur</div>
+<div class="grid">
+<div>
+<label>Tanggal Lembur</label>
+<input id="overtimeDate" type="date"/>
+</div>
+<div>
+<label>Total Jam Lembur (Auto)</label>
+<input id="totalHours" placeholder="Auto hitung..." readonly="" type="text"/>
+</div>
+<div>
+<label>Jam Mulai</label>
+<input id="startTime" type="time"/>
+</div>
+<div>
+<label>Jam Selesai</label>
+<input id="endTime" type="time"/>
+</div>
+</div>
+<div style="margin-top:16px;">
+<label>Alasan / Pekerjaan yang dilakukan</label>
+<textarea id="overtimeReason" placeholder="Contoh: Maintenance server, menyelesaikan laporan, dll." rows="4"></textarea>
+</div>
+</div>
+<!-- APPROVAL -->
+<div class="card">
+<div class="section-title">Approval</div>
+<div class="grid">
+<div>
+<label>Nama Atasan</label>
+<input id="supervisorName" placeholder="Nama atasan" type="text"/>
+</div>
+<div>
+<label>Jabatan Atasan (Opsional)</label>
+<input id="supervisorPosition" placeholder="Manager / Supervisor" type="text"/>
+</div>
+<div>
+<label>Kota / Tempat Surat Dibuat</label>
+<input id="cityName" placeholder="Jakarta" type="text"/>
+</div>
+</div>
+<div class="btn-row">
+<button class="btn btn-secondary" onclick="resetForm()">
+<i class="fa-solid fa-rotate-left"></i> Reset
+        </button>
+<button class="btn btn-primary" onclick="generatePDF()">
+<i class="fa-solid fa-file-pdf"></i> Generate PDF
+        </button>
+</div>
+</div>
+</div>
+<div class="footer">
+    © 2026 Zeppelin Portal • Overtime Request System
+  </div>
+<script src="../assets/js/lembur.js" type="module"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>

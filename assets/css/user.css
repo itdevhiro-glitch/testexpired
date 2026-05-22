@@ -1,0 +1,316 @@
+/* Extracted from user.html */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  
+  /* (DISEMPURNAKAN) Variabel Tema Profesional (Netral) */
+  :root{
+    --bg: #f8f9fa; /* (BERUBAH) Dari peach/pink ke abu-abu sangat muda */
+    --card: #ffffff; /* (BERUBAH) Putih bersih */
+    --muted: #6c757d;
+    --text: #212529;
+    --primary: #D9232D; /* Merah Zeppelin */
+    --primary-hover: #B01B22; /* Merah hover */
+    --accent: #F37321; /* Oranye Zeppelin */
+    --success: #16a34a;
+    --warning: #F37321; /* Oranye Zeppelin */
+    --danger: #D9232D; /* Merah Zeppelin */
+    --radius: 10px;
+    --border-color: #e9ecef; /* (BERUBAH) Dari pink ke abu-abu muda netral */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  }
+  [data-theme="dark"]{
+    /* (DISEMPURNAKAN) Dark mode netral (bukan coklat/merah) */
+    --bg:#18181b; /* zinc-900 */
+    --card:#27272a; /* zinc-800 */
+    --muted:#a1a1aa; /* zinc-400 */
+    --text:#f4f4f5; /* zinc-100 */
+    --primary:#e54e58;
+    --primary-hover:#d9232d;
+    --border-color: #3f3f46; /* zinc-700 */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -4px rgba(0, 0, 0, 0.15);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:'Inter', system-ui, Roboto, Arial, sans-serif; background:var(--bg);
+    color:var(--text); padding:24px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    font-size: 15px; /* (BARU) Sedikit lebih besar untuk keterbacaan */
+    line-height: 1.5;
+  }
+  .app{max-width:1000px;margin:0 auto}
+  
+  /* (DISEMPURNAKAN) Header dengan shadow */
+  header.app-header{
+    display:flex; align-items:center; gap:16px; margin-bottom:24px; 
+    padding: 16px 20px;
+    flex-wrap: wrap; 
+    background: var(--card); /* (BARU) Header kini memiliki latar belakang kartu */
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm); /* (BARU) Memberi 'lift' pada header */
+  }
+  .logo{
+    width:48px; height:48px; border-radius:var(--radius);
+    background:linear-gradient(135deg, var(--danger), var(--accent));
+    display:flex; align-items:center; justify-content:center; color:#fff;
+    font-weight:800; font-size:18px; flex-shrink: 0;
+  }
+  .title{ flex-grow: 1; }
+  .title .name{font-size:22px;font-weight:800}
+  .title .tag{font-size:13px;color:var(--muted);font-weight:500;}
+  .controls{margin-left:auto;display:flex;gap:12px;align-items:center}
+  
+  /* (DISEMPURNAKAN) Button */
+  .btn{
+    background:var(--primary); color:#fff; border:none; padding:9px 14px; border-radius:8px;
+    cursor:pointer; font-weight:600; display:inline-flex; align-items:center; gap:6px;
+    font-size:14px; transition: all 0.2s ease; 
+    text-decoration: none; line-height: 1.2;
+    white-space: nowrap;
+  }
+  .btn:hover{ background: var(--primary-hover); transform: translateY(-1px); }
+  .btn:not(.ghost){ box-shadow: var(--shadow-sm); }
+  .btn:active { transform: translateY(0); }
+  
+  .btn.ghost{ 
+    background:transparent; border:1px solid var(--border-color); 
+    color:var(--text); font-weight: 500; box-shadow: none; 
+  }
+  .btn.ghost:hover{ background: var(--bg); transform: translateY(-1px); }
+  .btn svg{width:16px;height:16px;stroke-width:2.5}
+
+  .btn.urgent {
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  .btn.urgent:hover {
+    background: var(--danger);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .card{
+    background:var(--card); padding: 20px 24px; border-radius:var(--radius);
+    box-shadow:var(--shadow-sm); border:1px solid var(--border-color);
+  }
+  h3 { 
+    font-size: 18px; font-weight: 700; margin-top: 0; margin-bottom: 16px; 
+    color: var(--text);
+  }
+  .small{font-size:13px;color:var(--muted);font-weight:500;}
+
+  .summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* (BERUBAH) Sedikit lebih lebar */
+    gap: 16px; margin-bottom: 20px;
+  }
+  /* (BARU) Gaya Ikon di Summary Card */
+  .summary-card {
+    padding: 16px !important; border-radius: var(--radius) !important;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .summary-card .icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .summary-card .icon svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 2;
+  }
+  .summary-card .small { font-weight: 600; font-size: 14px; color: var(--muted); }
+  .summary-card .count {
+    font-size: 26px !important; font-weight: 800 !important;
+    margin-top: 2px;
+    line-height: 1;
+  }
+  
+  /* (BARU) Warna Ikon Summary Card */
+  #summary-open .icon { background: #fffbeb; color: var(--warning); }
+  #summary-open .count { color: var(--warning); }
+  #summary-progress .icon { background: #e0f2fe; color: #0284c7; }
+  #summary-progress .count { color: #0284c7; }
+  #summary-closed .icon { background: #dcfce7; color: var(--success); }
+  #summary-closed .count { color: var(--success); }
+
+
+  .table-wrap{overflow:auto}
+  table{width:100%;border-collapse:collapse;min-width:600px}
+  th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--border-color);vertical-align: middle;}
+  th{
+    background: var(--bg); /* (BERUBAH) Menggunakan --bg agar kontras dengan --card */
+    color:var(--muted); font-size:12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  td { font-size: 14px; } /* (BARU) Konsistensi ukuran font */
+  
+  .status{
+    display:inline-block; padding: 4px 12px; border-radius:999px;
+    font-weight:600; font-size:12px; line-height: 1.5;
+  }
+  .s-open{background:#fffbeb;color:#b45309}
+  .s-progress{background:#e0f2fe;color:#0284c7}
+  .s-closed{background:#dcfce7;color:#16a34a}
+  
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none;
+    align-items:center; justify-content:center; z-index:9999; padding: 16px; 
+    backdrop-filter: blur(5px); /* (BARU) Efek blur profesional */
+  }
+  .modal{ 
+    width:500px; max-width: 100%; 
+    background:var(--card); padding: 24px; border-radius:12px; 
+    box-shadow: var(--shadow-lg); /* (BERUBAH) Shadow lebih dramatis */
+    border: 1px solid var(--border-color);
+  }
+  input,select,textarea{
+    width:100%; padding:10px 12px; border-radius:8px; border:1px solid var(--border-color);
+    background:var(--bg); color: var(--text); font-size:14px; font-family:'Inter', system-ui, Roboto, Arial;
+    transition: all 0.2s ease;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(217, 35, 45, 0.15);
+  }
+  textarea{min-height:120px;resize: vertical;}
+  footer.small{ margin-top:32px; text-align:center; color:var(--muted); font-size:13px; }
+  
+  .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(135deg, #D9232D 0%, #F37321 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: white;
+      z-index: 9999;
+  }
+  .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+      to { transform: rotate(360deg); }
+  }
+  .loading-screen p {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      font-weight: 300;
+  }
+  .app-content { 
+      display: none; 
+  }
+
+  /* (DISEMPURNAKAN) Media Query */
+  @media (max-width: 768px) {
+    body { padding: 16px; }
+    .app { padding: 0; }
+    
+    header.app-header {
+      padding: 12px;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .controls { 
+      margin-left: 0; width: 100%; 
+      justify-content: space-between; 
+      gap: 8px;
+    }
+    #userInfo { text-align: left; line-height: 1.4; }
+    #newReportBtn { 
+      padding: 9px 10px; 
+      width: 100%; 
+      justify-content: center;
+      margin-top: 8px;
+      order: 4; /* (BERUBAH) Pindah ke paling bawah */
+    } 
+    .controls #userInfo { order: 1; }
+    /* (BARU) Atur urutan tombol di mobile */
+    .controls #dashboardBtn { order: 2; }
+    .controls #logoutBtn { order: 3; }
+    
+    /* (BARU) Pastikan tombol ikon pas ukurannya */
+    .controls #dashboardBtn, .controls #logoutBtn {
+        padding: 9px 10px;
+        margin-left: auto; /* Dorong 2 tombol ini ke kanan */
+    }
+    .controls #userInfo { margin-right: auto; } /* Dorong info ke kiri */
+    .controls #dashboardBtn { margin-left: 0; }
+    
+    .logo { width: 40px; height: 40px; }
+    .title .name { font-size: 20px; }
+
+    .table-wrap { overflow: hidden; } 
+    table { min-width: 0; }
+    table thead {
+      border: none; clip: rect(0 0 0 0);
+      height: 1px; margin: -1px; overflow: hidden;
+      padding: 0; position: absolute; width: 1px;
+    }
+    table tr {
+      display: block;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    table td {
+      display: block;
+      padding: 6px 0;
+      border-bottom: none;
+      font-size: 14px;
+    }
+    table td:not(:first-child) {
+        border-top: 1px dashed var(--border-color);
+        padding-top: 10px;
+        margin-top: 4px;
+    }
+    table td:before {
+      content: attr(data-label);
+      display: block;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    table td[data-label="ID Laporan"] { padding-top: 0; }
+    table td[data-label="ID Laporan"]::before { display: none; }
+    table td[data-label="ID Laporan"] {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .status {
+        padding: 6px 14px;
+        width: 100%; 
+        text-align: center;
+    }
+    .btn.urgent {
+        width: 100%;
+        text-align: center;
+        padding: 8px;
+    }
+  }

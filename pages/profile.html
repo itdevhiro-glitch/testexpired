@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+<title>Zeppelin — User Profile</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+<link href="../assets/css/profile.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div class="loading-screen" id="loading-screen">
+<div class="spinner"></div>
+<p>Memuat Profile...</p>
+</div>
+<div class="app-layout">
+<aside class="sidebar">
+<a class="brand" href="dashboard.html">
+<div class="brand-icon"><i class="ri-arrow-left-line"></i></div>
+<div class="brand-text">Zeppelin <span>Portal</span></div>
+</a>
+<div style="text-align: center; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border-subtle);">
+<div id="sb_avatar" style="width: 80px; height: 80px; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: var(--text-secondary); margin: 0 auto 12px auto; border: 1px solid var(--border-subtle);">
+<i class="ri-user-line"></i>
+</div>
+<div id="sb_name" style="font-weight: 800; font-size: 16px; color: var(--text-primary); margin-bottom: 4px;">Loading...</div>
+<div id="sb_role" style="font-size: 12px; color: var(--text-secondary); font-weight: 500; background: #f3f4f6; display: inline-block; padding: 4px 12px; border-radius: 20px;">Employee</div>
+</div>
+<ul class="nav-menu">
+<li class="nav-item active" onclick="switchView('settings')"><i class="ri-user-settings-line"></i> Pengaturan Akun</li>
+<li class="nav-item" onclick="switchView('tickets')"><i class="ri-ticket-line"></i> Tiket Saya</li>
+<li class="nav-item" onclick="switchView('assets')"><i class="ri-macbook-line"></i> Aset Saya</li>
+</ul>
+<div style="margin-top: auto;">
+<button class="nav-item" onclick="logout()" style="width: 100%; color: var(--danger); background: transparent; border: 1px solid transparent; justify-content: center;">
+<i class="ri-logout-box-line"></i> Keluar
+            </button>
+</div>
+</aside>
+<main class="main-content">
+<div id="view-settings">
+<div class="view-header">
+<div class="view-title">
+<h1>Pengaturan Akun</h1>
+<p>Kelola informasi pribadi dan keamanan akun Anda.</p>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+<div class="card">
+<h3 style="margin-top:0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+<i class="ri-user-line"></i> Informasi Pribadi
+                    </h3>
+<p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.5; background: #fff7ed; padding: 12px; border-radius: 8px; border: 1px solid #ffedd5;">
+<i class="ri-information-fill" style="color: var(--warning);"></i> <strong>Catatan:</strong> Nama dan Departemen dikelola oleh Admin/HRD. Hubungi IT atau HR jika terdapat kesalahan data.
+                    </p>
+<form onsubmit="updateProfile(event)">
+<label>Nama Lengkap (Read Only)</label>
+<input id="p_name" readonly=""/>
+<label>Departemen (Read Only)</label>
+<input id="p_dept" readonly=""/>
+<label>Nomor WhatsApp / HP</label>
+<input id="p_phone" placeholder="Contoh: 0812..." required=""/>
+<div style="text-align: right;">
+<button class="btn" type="submit"><i class="ri-save-line"></i> Simpan No HP</button>
+</div>
+</form>
+</div>
+<div class="card">
+<h3 style="margin-top:0; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+<i class="ri-shield-key-line"></i> Keamanan
+                    </h3>
+<p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.5;">
+                        Disarankan untuk mengganti password secara berkala demi keamanan akun Zeppelin Anda.
+                    </p>
+<form onsubmit="changePassword(event)">
+<label>Password Baru</label>
+<input id="p_pass" minlength="6" placeholder="Minimal 6 karakter" required="" type="password"/>
+<label>Konfirmasi Password</label>
+<input id="p_pass_conf" minlength="6" placeholder="Ulangi password baru" required="" type="password"/>
+<button class="btn btn-outline" style="border-color: var(--primary); color: var(--primary); width: 100%; margin-top: 8px;" type="submit">
+<i class="ri-lock-password-line"></i> Update Password
+                        </button>
+</form>
+</div>
+</div>
+</div>
+<div class="hidden" id="view-tickets">
+<div class="view-header" style="display: flex; justify-content: space-between; align-items: flex-end;">
+<div class="view-title">
+<h1>Tiket Support</h1>
+<p>Riwayat pelaporan kendala IT Anda.</p>
+</div>
+</div>
+<div class="card" style="padding: 0; overflow: hidden; border: 1px solid var(--border-subtle);">
+<div style="overflow-x: auto;">
+<table id="ticketTable">
+<thead>
+<tr>
+<th>ID Tiket</th>
+<th>Kendala</th>
+<th>Status</th>
+<th>Tanggal</th>
+<th>Teknisi</th>
+</tr>
+</thead>
+<tbody id="ticketTableBody">
+<tr><td colspan="5" style="text-align:center; padding: 40px; color: var(--text-secondary);">Memuat data...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="hidden" id="view-assets">
+<div class="view-header">
+<div class="view-title">
+<h1>Perangkat Saya</h1>
+<p>Hardware dan software yang diinventarisir atas nama Anda.</p>
+</div>
+</div>
+<div id="assetList">
+</div>
+</div>
+</main>
+<div class="mobile-nav" style="display: none;">
+<a class="mobile-nav-item" href="dashboard.html">
+<i class="ri-arrow-left-circle-line"></i>
+<span>Kembali</span>
+</a>
+<div class="mobile-nav-item active" onclick="switchView('settings')">
+<i class="ri-user-settings-line"></i>
+<span>Akun</span>
+</div>
+<div class="mobile-nav-item" onclick="switchView('tickets')">
+<i class="ri-ticket-line"></i>
+<span>Tiket</span>
+</div>
+<div class="mobile-nav-item" onclick="logout()">
+<i class="ri-logout-box-line" style="color: var(--danger);"></i>
+<span>Keluar</span>
+</div>
+</div>
+</div>
+
+<script defer="" src="../assets/js/profile.js"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>

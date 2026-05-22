@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Professional Finance - Zeppelin Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<link href="../assets/css/finance.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div id="toast-container"></div>
+<div class="loading-screen" id="loading-screen">
+<div class="spinner"></div>
+<p style="margin-top: 15px; font-weight: 500;">Sinkronisasi Data Finance...</p>
+</div>
+<nav class="navbar">
+<div class="nav-container">
+<a class="nav-back" href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> <span>Dashboard Utama</span></a>
+<a class="nav-logo" href="#"><i class="fa-solid fa-chart-pie"></i> FINANCE HUB</a>
+<div class="user-pill">
+<i class="fa-solid fa-user-tie" style="color: var(--primary-red);"></i>
+<span id="user-display">Finance Team</span>
+</div>
+</div>
+</nav>
+<div class="container">
+<div class="workspace-grid">
+<aside class="sidebar">
+<div class="sidebar-title">Menu Utama</div>
+<div class="menu-item active" onclick="switchTab('overview')">
+<i class="fa-solid fa-gauge-high"></i> Ringkasan
+                </div>
+<div class="menu-item" onclick="switchTab('customers')">
+<i class="fa-solid fa-building-user"></i> Data Pelanggan
+                </div>
+<div class="menu-item" onclick="switchTab('invoice')">
+<i class="fa-solid fa-file-invoice-dollar"></i> Invoice Monitor
+                </div>
+<div class="menu-item" onclick="switchTab('reimburse')">
+<i class="fa-solid fa-receipt"></i> Reimbursement
+                </div>
+<div class="menu-item" onclick="switchTab('calculator')">
+<i class="fa-solid fa-calculator"></i> Kalkulator Pajak
+                </div>
+<hr style="margin: 15px 0; border: 0; border-top: 1px solid #e2e8f0;"/>
+<div class="sidebar-title">Modul Lain</div>
+<a class="menu-item" href="pettycash.html" style="color: #64748b;">
+<i class="fa-solid fa-wallet" style="color: var(--primary-orange);"></i> Buka Petty Cash
+                </a>
+</aside>
+<main class="content">
+<div class="tool-panel active" id="panel-overview">
+<div class="panel-header">
+<div class="panel-title">
+<h2>Ringkasan Keuangan</h2>
+<p>Overview aktivitas invoice &amp; cashflow operasional.</p>
+</div>
+</div>
+<div class="summary-grid">
+<div class="summary-card border-l-green">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+<h4 style="margin-bottom: 0;">Saldo Operasional</h4>
+<button class="btn-sm-add" onclick="openModal('topup')"><i class="fa-solid fa-plus"></i> Isi</button>
+</div>
+<div class="val" id="pc-balance" style="color: var(--success-green);">Rp 0</div>
+<i class="fa-solid fa-wallet bg-icon"></i>
+</div>
+<div class="summary-card border-l-blue">
+<h4>Estimasi Pemasukan (AR)</h4>
+<div class="val" id="ov-total-ar" style="color: var(--info-blue);">Rp 0</div>
+<i class="fa-solid fa-file-invoice-dollar bg-icon"></i>
+</div>
+<div class="summary-card border-l-red">
+<h4>Tagihan Overdue</h4>
+<div class="val" id="ov-overdue-count" style="color: #D9232D;">0</div>
+<i class="fa-solid fa-triangle-exclamation bg-icon"></i>
+</div>
+</div>
+<div class="analytics-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+<div class="card">
+<div class="section-label" style="font-weight: 700; margin-bottom: 15px; color: #334155;">
+<span><i class="fa-solid fa-chart-simple" style="margin-right: 8px; color: var(--primary-red);"></i> Arus Kas (Income vs Expense)</span>
+</div>
+<div style="position: relative; height: 300px; width: 100%;">
+<canvas id="financeChart"></canvas>
+</div>
+</div>
+<div class="card">
+<div class="section-label" style="font-weight: 700; margin-bottom: 15px; color: #334155;">
+<span><i class="fa-solid fa-chart-pie" style="margin-right: 8px; color: var(--primary-orange);"></i> Pengeluaran</span>
+</div>
+<div style="position: relative; height: 300px; width: 100%;">
+<canvas id="expenseChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+<div class="tool-panel" id="panel-customers">
+<div class="panel-header">
+<div class="panel-title">
+<h2>Database Pelanggan</h2>
+<p>Manajemen data mitra bisnis.</p>
+</div>
+<div class="header-actions">
+<button class="btn-excel" onclick="downloadExcel('customer')"><i class="fa-solid fa-file-excel"></i> Export</button>
+<button class="btn-primary" onclick="openModal('customer', null)"><i class="fa-solid fa-plus"></i> Pelanggan</button>
+</div>
+</div>
+<div class="card" style="padding: 0; overflow: hidden; border: 1px solid #e2e8f0;">
+<div class="table-responsive" style="border: none; border-radius: 0;">
+<table>
+<thead>
+<tr>
+<th>Perusahaan</th>
+<th>Kontak</th>
+<th>NPWP</th>
+<th>Total Transaksi</th>
+<th style="text-align: right;">Aksi</th>
+</tr>
+</thead>
+<tbody id="customer-table">
+<tr><td align="center" colspan="5" style="padding: 30px; color: #94a3b8;">Memuat data...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="tool-panel" id="panel-invoice">
+<div class="panel-header">
+<div class="panel-title">
+<h2>Monitoring Invoice</h2>
+<p>Pantau status tagihan dan pembayaran.</p>
+</div>
+<div class="header-actions">
+<button class="btn-excel" onclick="downloadExcel('invoice')"><i class="fa-solid fa-file-excel"></i> Export</button>
+<button class="btn-primary" onclick="openModal('invoice')"><i class="fa-solid fa-plus"></i> Buat Invoice</button>
+</div>
+</div>
+<div class="card" style="padding: 0; overflow: hidden; border: 1px solid #e2e8f0;">
+<div class="table-responsive" style="border: none; border-radius: 0;">
+<table>
+<thead>
+<tr>
+<th>No. Invoice</th>
+<th>Customer</th>
+<th>Due Date</th>
+<th>Nominal</th>
+<th>Status</th>
+<th style="text-align: right;">Aksi</th>
+</tr>
+</thead>
+<tbody id="invoice-table">
+<tr><td align="center" colspan="6" style="padding: 30px; color: #94a3b8;">Memuat data...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="tool-panel" id="panel-reimburse">
+<div class="panel-header">
+<div class="panel-title">
+<h2>E-Reimbursement</h2>
+<p>Klaim biaya operasional karyawan.</p>
+</div>
+<div class="header-actions">
+<button class="btn-excel" onclick="downloadExcel('reimburse')"><i class="fa-solid fa-file-excel"></i> Export</button>
+<button class="btn-primary" onclick="openModal('reimburse')"><i class="fa-solid fa-plus"></i> Klaim Baru</button>
+</div>
+</div>
+<div class="card" style="padding: 0; overflow: hidden; border: 1px solid #e2e8f0;">
+<div class="table-responsive" style="border: none; border-radius: 0;">
+<table>
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Karyawan</th>
+<th>Keperluan</th>
+<th>Nominal</th>
+<th>Status</th>
+<th style="text-align: right;">Aksi</th>
+</tr>
+</thead>
+<tbody id="reimburse-table">
+<tr><td align="center" colspan="6" style="padding: 30px; color: #94a3b8;">Memuat data...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="tool-panel" id="panel-calculator">
+<div class="panel-header">
+<div class="panel-title">
+<h2>Kalkulator PPN 11%</h2>
+<p>Hitung DPP dan PPN faktur pajak.</p>
+</div>
+</div>
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+<div class="form-group">
+<label>Harga Nominal (Rp)</label>
+<input id="calc-base" oninput="calculateTax()" placeholder="0" style="font-size: 1.5rem; font-weight: bold; color: var(--primary-red); letter-spacing: 1px;" type="number"/>
+</div>
+<div class="form-group">
+<label style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px; background: #f8fafc; border-radius: 8px;">
+<input id="calc-include-ppn" onchange="calculateTax()" style="width: 20px; height: 20px; flex-shrink: 0;" type="checkbox"/>
+<span style="font-weight: 500;">Harga sudah termasuk PPN (Include)</span>
+</label>
+</div>
+<div style="background: #fff7ed; border: 1px dashed #fdba74; padding: 24px; border-radius: 12px; margin-top: 24px;">
+<div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+<span style="color: #9a3412; font-size: 0.9rem;">Dasar Pengenaan Pajak (DPP)</span>
+<span id="res-dpp" style="font-weight: 700; color: #1e293b;">Rp 0</span>
+</div>
+<div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+<span style="color: #9a3412; font-size: 0.9rem;">PPN (11%)</span>
+<span id="res-ppn" style="font-weight: 700; color: #D9232D;">Rp 0</span>
+</div>
+<hr style="border: 0; border-top: 2px solid #fdba74; margin: 16px 0; opacity: 0.3;"/>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+<span style="color: #9a3412; font-weight: 800; text-transform: uppercase;">TOTAL TAGIHAN</span>
+<span id="res-total" style="font-size: 1.4rem; font-weight: 900; color: #0f172a;">Rp 0</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<nav class="bottom-nav">
+<div class="nav-item active" onclick="switchTab('overview')">
+<i class="fa-solid fa-gauge-high"></i>
+<span>Home</span>
+</div>
+<div class="nav-item" onclick="switchTab('customers')">
+<i class="fa-solid fa-users"></i>
+<span>Mitra</span>
+</div>
+<div class="nav-item" onclick="switchTab('invoice')">
+<i class="fa-solid fa-file-invoice"></i>
+<span>Invoice</span>
+</div>
+<div class="nav-item" onclick="switchTab('reimburse')">
+<i class="fa-solid fa-receipt"></i>
+<span>Klaim</span>
+</div>
+<div class="nav-item" onclick="switchTab('calculator')">
+<i class="fa-solid fa-calculator"></i>
+<span>Pajak</span>
+</div>
+</nav>
+<div class="modal-backdrop" id="modal-customer" onclick="if(event.target === this) closeModals()">
+<div class="modal-content">
+<div class="modal-header">
+<h3 id="modal-title-cust">Pelanggan</h3>
+<button onclick="closeModals()" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color: #94a3b8;"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label>Nama Perusahaan</label>
+<input id="cust-name" placeholder="PT. ..." type="text"/>
+</div>
+<div class="form-group">
+<label>NPWP</label>
+<input id="cust-npwp" placeholder="00.000..." type="text"/>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+<div class="form-group">
+<label>PIC</label>
+<input id="cust-pic" type="text"/>
+</div>
+<div class="form-group">
+<label>Email</label>
+<input id="cust-email" type="email"/>
+</div>
+</div>
+<div class="form-group">
+<label>Telepon</label>
+<input id="cust-phone" type="text"/>
+</div>
+<div class="form-group">
+<label>Alamat</label>
+<textarea id="cust-addr" rows="2" style="width:100%; padding:14px; border:1px solid #cbd5e1; border-radius:10px;"></textarea>
+</div>
+<button class="btn-primary" id="btn-save-cust" onclick="saveCustomer()" style="width: 100%; justify-content: center;">Simpan Data</button>
+</div>
+</div>
+</div>
+<div class="modal-backdrop" id="modal-invoice" onclick="if(event.target === this) closeModals()">
+<div class="modal-content">
+<div class="modal-header">
+<h3>Buat Invoice</h3>
+<button onclick="closeModals()" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color: #94a3b8;"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label>Nomor Invoice</label>
+<input id="inv-no" placeholder="INV/2025/..." type="text"/>
+</div>
+<div class="form-group">
+<label>Pilih Pelanggan</label>
+<select id="inv-cust-select">
+<option value="">-- Pilih --</option>
+</select>
+</div>
+<div class="form-group">
+<label>Jatuh Tempo</label>
+<input id="inv-date" type="date"/>
+</div>
+<div class="form-group">
+<label>Total Tagihan (Rp)</label>
+<input id="inv-amount" type="number"/>
+</div>
+<button class="btn-primary" onclick="saveInvoice()" style="width: 100%; justify-content: center;">Terbitkan</button>
+</div>
+</div>
+</div>
+<div class="modal-backdrop" id="modal-reimburse" onclick="if(event.target === this) closeModals()">
+<div class="modal-content">
+<div class="modal-header">
+<h3>Ajukan Reimburse</h3>
+<button onclick="closeModals()" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color: #94a3b8;"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label>Nama Karyawan</label>
+<input id="reim-name" type="text"/>
+</div>
+<div class="form-group">
+<label>Keperluan</label>
+<input id="reim-desc" type="text"/>
+</div>
+<div class="form-group">
+<label>Nominal (Rp)</label>
+<input id="reim-amount" type="number"/>
+</div>
+<button class="btn-primary" onclick="saveReimburse()" style="width: 100%; justify-content: center;">Kirim Pengajuan</button>
+</div>
+</div>
+</div>
+<div class="modal-backdrop" id="modal-topup" onclick="if(event.target === this) closeModals()">
+<div class="modal-content">
+<div class="modal-header">
+<h3 style="color: var(--success-green);"><i class="fa-solid fa-plus-circle"></i> Top Up Saldo</h3>
+<button onclick="closeModals()" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color: #94a3b8;"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+<label>Tanggal</label>
+<input id="topup-date" type="date"/>
+</div>
+<div class="form-group">
+<label>Nominal Masuk (Rp)</label>
+<input id="topup-amount" style="font-weight: bold; font-size: 1.1rem; color: var(--success-green);" type="number"/>
+</div>
+<div class="form-group">
+<label>Sumber Dana</label>
+<input id="topup-desc" placeholder="Bank / Cash" type="text"/>
+</div>
+<button class="btn-primary" onclick="saveTopUp()" style="width: 100%; justify-content: center; background-color: var(--success-green);">
+                    Simpan Saldo
+                </button>
+</div>
+</div>
+</div>
+<script defer="" src="../assets/js/finance.js"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>

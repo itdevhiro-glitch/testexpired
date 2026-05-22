@@ -1,0 +1,77 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "users": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && ($uid === auth.uid || (root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center'))",
+        "uid": { ".validate": "newData.val() === $uid" },
+        "email": { ".validate": "newData.isString()" },
+        "name": { ".validate": "newData.isString() && newData.val().length <= 80" },
+        "phone": { ".validate": "!newData.exists() || (newData.isString() && newData.val().length <= 25)" },
+        "department": { ".validate": "!newData.exists() || newData.isString()" },
+        "status": { ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center')", ".validate": "newData.val() === 'pending' || newData.val() === 'approved' || newData.val() === 'rejected'" },
+        "role": { ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center')", ".validate": "newData.val() === 'admin' || newData.val() === 'it' || newData.val() === 'marketing' || newData.val() === 'finance' || newData.val() === 'user'" },
+        "$other": { ".validate": true }
+      }
+    },
+
+    "announcements": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center')",
+        ".validate": "newData.hasChildren(['title','content','timestamp'])"
+      }
+    },
+
+    "calendar_notes": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+
+    "chats": {
+      "$room": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "$msg": {
+          ".validate": "newData.hasChildren(['text','uid','timestamp']) && newData.child('uid').val() === auth.uid"
+        }
+      }
+    },
+
+    "reports": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'it' || root.child('users').child(auth.uid).child('departemen').val() === 'IT' || root.child('users').child(auth.uid).child('departemen').val() === 'Information Technology' || root.child('users').child(auth.uid).child('departemen').val() === 'Teknologi Informasi') || (!data.exists() && newData.child('uid').val() === auth.uid))"
+      }
+    },
+
+    "device_requests": {
+      ".read": "auth != null",
+      "$id": {
+        ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || !data.exists())"
+      }
+    },
+
+    "marketing_inventory": {
+      ".read": "auth != null",
+      ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'marketing' || root.child('users').child(auth.uid).child('departemen').val() === 'Marketing' || root.child('users').child(auth.uid).child('departemen').val() === 'Pemasaran'))"
+    },
+    "marketing_transactions": {
+      ".read": "auth != null",
+      ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'marketing' || root.child('users').child(auth.uid).child('departemen').val() === 'Marketing' || root.child('users').child(auth.uid).child('departemen').val() === 'Pemasaran'))"
+    },
+
+    "finance_customers": { ".read": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Accounting' || root.child('users').child(auth.uid).child('departemen').val() === 'Keuangan'))", ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Accounting' || root.child('users').child(auth.uid).child('departemen').val() === 'Keuangan'))" },
+    "finance_invoices": { ".read": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Accounting' || root.child('users').child(auth.uid).child('departemen').val() === 'Keuangan'))", ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Accounting' || root.child('users').child(auth.uid).child('departemen').val() === 'Keuangan'))" },
+    "finance_reimbursement": { ".read": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Accounting' || root.child('users').child(auth.uid).child('departemen').val() === 'Keuangan'))", ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Accounting' || root.child('users').child(auth.uid).child('departemen').val() === 'Keuangan'))" },
+    "finance_pettycash": { ".read": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Accounting' || root.child('users').child(auth.uid).child('departemen').val() === 'Keuangan'))", ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Finance' || root.child('users').child(auth.uid).child('departemen').val() === 'Accounting' || root.child('users').child(auth.uid).child('departemen').val() === 'Keuangan'))" },
+
+    "bastdb": { ".read": "auth != null", ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'it' || root.child('users').child(auth.uid).child('departemen').val() === 'IT' || root.child('users').child(auth.uid).child('departemen').val() === 'Information Technology' || root.child('users').child(auth.uid).child('departemen').val() === 'Teknologi Informasi'))" },
+    "bast_documents": { ".read": "auth != null", ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'it' || root.child('users').child(auth.uid).child('departemen').val() === 'IT' || root.child('users').child(auth.uid).child('departemen').val() === 'Information Technology' || root.child('users').child(auth.uid).child('departemen').val() === 'Teknologi Informasi'))" },
+    "BAST": { ".read": "auth != null", ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'it' || root.child('users').child(auth.uid).child('departemen').val() === 'IT' || root.child('users').child(auth.uid).child('departemen').val() === 'Information Technology' || root.child('users').child(auth.uid).child('departemen').val() === 'Teknologi Informasi'))" },
+    "counter": { ".read": "auth != null", ".write": "auth != null && ((root.child('users').child(auth.uid).child('role').val() === 'admin' || auth.token.email === 'root@zeppelin.center') || (root.child('users').child(auth.uid).child('role').val() === 'it' || root.child('users').child(auth.uid).child('departemen').val() === 'IT' || root.child('users').child(auth.uid).child('departemen').val() === 'Information Technology' || root.child('users').child(auth.uid).child('departemen').val() === 'Teknologi Informasi'))" }
+  }
+}

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BAST Perangkat IT</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+
+<link href="../assets/css/BAST.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div class="loading-screen" id="loadingScreen">
+<div class="spinner"></div>
+<p>Loading BAST Form...</p>
+</div>
+<div class="container fade-in-up" id="mainContent">
+<div class="page-actions">
+<a class="back-button" href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard</a>
+<button class="btn-primary" id="historyButton" type="button">Lihat Riwayat BAST</button>
+</div>
+<div class="card" id="printArea">
+<!-- HEADER -->
+<div class="doc-header">
+<div class="company">
+<div class="logo">IT</div>
+<div>
+<div class="company-name">Zeppelin</div>
+<div class="company-dept">IT Department</div>
+</div>
+</div>
+<div class="doc-title">
+<h1>BERITA ACARA SERAH TERIMA PERANGKAT IT</h1>
+<div class="meta">
+<span id="docNo">No : ZEP-001</span>
+<span id="tanggal">Tanggal : -</span>
+</div>
+</div>
+</div>
+<!-- DATA PENERIMA -->
+<div class="section">
+<h2>Data Penerima</h2>
+<div class="form-grid">
+<div class="field">
+<label>Nama</label>
+<input id="namaPenerima" readonly="" type="text"/>
+</div>
+<div class="field">
+<label>NIK</label>
+<input id="nikPenerima" type="text"/>
+</div>
+<div class="field">
+<label>Departemen</label>
+<input id="deptPenerima" readonly="" type="text"/>
+</div>
+<div class="field">
+<label>Lokasi</label>
+<input id="lokasiPenerima" type="text"/>
+</div>
+<div class="field">
+<label>Tanggal</label>
+<input id="tgl" type="date"/>
+</div>
+<div class="field">
+<label>No Ticket</label>
+<input id="ticketPenerima" readonly="" type="text"/>
+</div>
+<div class="field" style="grid-column:1/4">
+<label>Keperluan</label>
+<textarea id="keperluanPenerima"></textarea>
+</div>
+</div>
+</div>
+<div class="modal-backdrop" id="history-modal-backdrop"></div>
+<div class="modal-content" id="history-modal-content">
+<div class="modal-header">
+<h3>Riwayat BAST Saya</h3>
+<button class="close-button" id="history-modal-close"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="modal-body">
+<div class="bast-history" id="bast-history-list">
+<div class="history-empty">Memuat riwayat BAST...</div>
+</div>
+</div>
+</div>
+<!-- TABEL PERANGKAT -->
+<div class="section">
+<h2>Daftar Perangkat</h2>
+<table id="deviceTable">
+<thead>
+<tr>
+<th>No</th>
+<th>Jenis Perangkat</th>
+<th>Serial Number</th>
+<th>Qty</th>
+<th>Keterangan</th>
+</tr>
+</thead>
+<tbody id="deviceBody">
+<tr>
+<td>1</td>
+<td><input/></td>
+<td><input/></td>
+<td><input type="number" value="1"/></td>
+<td><input/></td>
+</tr>
+</tbody>
+</table>
+<div class="controls">
+<button class="btn-add" onclick="addRow()" type="button">Tambah Baris</button>
+<button class="btn-primary" onclick="saveBAST()" type="button">Simpan</button>
+<button class="btn-primary" onclick="window.print()" type="button">Print</button>
+</div>
+<div id="bast-msg" style="margin-top:14px; display:none; padding:12px; border-radius:10px; font-size:13px;"></div>
+</div>
+<!-- PERNYATAAN -->
+<div class="section">
+<h2>Pernyataan</h2>
+<p style="font-size:13px;line-height:1.6">
+
+Dengan ditandatanganinya dokumen ini, pihak penerima menyatakan telah menerima perangkat IT sesuai daftar di atas dalam kondisi baik dan layak digunakan. Penerima bertanggung jawab atas penggunaan serta keamanan perangkat selama masa pemakaian sesuai kebijakan perusahaan.
+
+</p>
+</div>
+<!-- SIGNATURE -->
+<div class="signature-row">
+<div class="signature">
+<div>Menyerahkan</div>
+<canvas></canvas>
+<input placeholder="Nama &amp; Jabatan"/>
+</div>
+<div class="signature">
+<div>Mengetahui</div>
+<canvas></canvas>
+<input placeholder="Nama &amp; Jabatan"/>
+</div>
+<div class="signature">
+<div>Penerima</div>
+<canvas></canvas>
+<input placeholder="Nama"/>
+</div>
+</div>
+<!-- FOOTER -->
+<div class="footer">
+<div>
+Dokumen ini merupakan bukti sah serah terima perangkat IT.
+</div>
+<div>
+Zeppelin – IT Department
+</div>
+</div>
+</div>
+</div>
+<script src="../assets/js/BAST.js" type="module"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>

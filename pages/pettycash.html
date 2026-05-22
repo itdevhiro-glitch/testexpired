@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Petty Cash - Zeppelin Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+
+<link href="../assets/css/pettycash.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div id="loading-screen" style="position: fixed; inset: 0; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+<div style="width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+<p style="margin-top: 16px; font-weight: 500; color: #64748b; font-size: 0.9rem;">Memuat Data...</p>
+
+</div>
+<nav class="navbar">
+<div class="container nav-inner">
+<div style="display: flex; align-items: center; gap: 12px;">
+<a class="nav-back" href="finance.html">
+<i class="fa-solid fa-chevron-left"></i> Dashboard
+                </a>
+<span style="color: #cbd5e1;">|</span>
+<a class="brand" href="#">
+<i class="fa-solid fa-wallet"></i> Petty Cash
+                </a>
+</div>
+<div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+<div style="width: 28px; height: 28px; background: #fee2e2; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+<i class="fa-solid fa-user"></i>
+</div>
+<span class="hidden-mobile" id="user-display">Finance Team</span>
+</div>
+</div>
+</nav>
+<div class="container">
+<header class="page-header">
+<h1 class="page-title">Buku Kas &amp; Operasional</h1>
+<p class="page-subtitle">Kelola pemasukan dan pengeluaran harian perusahaan.</p>
+</header>
+<div class="stats-grid">
+<div class="stat-card border-balance">
+<div class="stat-label">Sisa Saldo (Balance)</div>
+<div class="stat-value" id="stat-balance" style="color: var(--accent);">Rp 0</div>
+<i class="fa-solid fa-vault stat-icon-bg"></i>
+</div>
+<div class="stat-card border-income">
+<div class="stat-label">Total Pemasukan</div>
+<div class="stat-value" id="stat-income">Rp 0</div>
+<i class="fa-solid fa-arrow-trend-up stat-icon-bg"></i>
+</div>
+<div class="stat-card border-expense">
+<div class="stat-label">Total Pengeluaran</div>
+<div class="stat-value" id="stat-expense">Rp 0</div>
+<i class="fa-solid fa-receipt stat-icon-bg"></i>
+</div>
+</div>
+<div class="action-toolbar">
+<div class="tab-filters">
+<button class="filter-btn active" onclick="setFilter('all')">Semua</button>
+<button class="filter-btn" onclick="setFilter('income')">Pemasukan</button>
+<button class="filter-btn" onclick="setFilter('expense')">Pengeluaran</button>
+</div>
+<div style="display: flex; gap: 12px; flex: 1; justify-content: flex-end;">
+<div class="search-wrapper">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input class="search-input" id="search-input" placeholder="Cari transaksi..." type="text"/>
+</div>
+<button class="btn btn-primary" onclick="openModal()">
+<i class="fa-solid fa-plus"></i> Transaksi
+                </button>
+</div>
+</div>
+<div class="table-container">
+<div class="table-responsive">
+<table>
+<thead>
+<tr>
+<th style="width: 50px;"></th>
+<th>Tanggal</th>
+<th>Keterangan</th>
+<th>Kategori</th>
+<th>Nominal</th>
+<th style="text-align: right;">Aksi</th>
+</tr>
+</thead>
+<tbody id="pc-table-body"></tbody>
+</table>
+</div>
+<div class="empty-state hidden" id="empty-state">
+<i class="fa-solid fa-clipboard-list empty-icon"></i>
+<p>Belum ada data transaksi yang ditemukan.</p>
+</div>
+</div>
+<div style="margin-top: 40px; text-align: center; color: #94a3b8; font-size: 0.8rem;">
+            © 2025 Zeppelin Finance System. Secure Data.
+        </div>
+</div>
+<div class="modal-backdrop" id="modal-backdrop"></div>
+<div class="modal-card" id="modal-content">
+<div class="modal-header">
+<h3 id="modal-title" style="font-weight: 700; color: var(--text-main);">Transaksi Baru</h3>
+<button class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="modal-body">
+<input id="trx-id" type="hidden"/>
+<input id="trx-type" type="hidden" value="expense"/>
+<div class="type-selector">
+<button class="type-option selected-exp" id="btn-type-exp" onclick="setFormType('expense')">
+<i class="fa-solid fa-arrow-down"></i> Pengeluaran
+                </button>
+<button class="type-option" id="btn-type-inc" onclick="setFormType('income')">
+<i class="fa-solid fa-arrow-up"></i> Pemasukan
+                </button>
+</div>
+<div class="form-group">
+<label class="form-label">Tanggal</label>
+<input class="form-input" id="trx-date" type="date"/>
+</div>
+<div class="form-group">
+<label class="form-label">Keterangan</label>
+<input class="form-input" id="trx-desc" placeholder="Contoh: Beli Kertas / Top Up Kas" type="text"/>
+</div>
+<div class="form-group">
+<label class="form-label">Kategori</label>
+<select class="form-input" id="trx-cat"></select>
+</div>
+<div class="form-group">
+<label class="form-label">Nominal (Rp)</label>
+<input class="form-input" id="trx-amount" placeholder="0" type="number"/>
+</div>
+<button class="btn btn-primary btn-full" onclick="saveTransaction()">
+                Simpan Transaksi
+            </button>
+</div>
+</div>
+<div class="toast" id="toast">
+<i class="fa-solid fa-circle-check"></i>
+<span id="toast-msg">Data berhasil disimpan</span>
+</div>
+<script src="../assets/js/pettycash.js" type="module"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Pusat Kolaborasi - Zeppelin Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+
+<link href="../assets/css/chat.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<nav class="navbar">
+<div class="nav-container">
+<a class="nav-logo" href="dashboard.html">
+<i class="fa-solid fa-gear"></i> ZEPPELIN
+            </a>
+<div class="nav-right">
+<div class="user-greeting" id="user-greeting">
+                    Halo, <span>Memuat...</span>
+</div>
+<button class="btn-nav btn-outline" id="mobile-menu-trigger" style="display: none; border-color: var(--primary-color); color: var(--primary-color);">
+<i class="fa-solid fa-comments"></i> Chat
+                </button>
+<a class="btn-nav btn-outline" href="dashboard.html">
+<i class="fa-solid fa-house"></i>
+</a>
+<button class="btn-nav btn-outline" id="logout-btn" style="border-color: #fee2e2; color: #D9232D;">
+<i class="fa-solid fa-right-from-bracket"></i>
+</button>
+</div>
+</div>
+</nav>
+<div class="chat-layout">
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="chat-sidebar" id="chat-sidebar">
+<div class="sidebar-header">
+<h2 class="sidebar-title">Pusat Pesan</h2>
+<div class="search-box">
+<i class="fa-solid fa-magnifying-glass"></i>
+<input id="search-contact" placeholder="Cari rekan atau grup..." type="text"/>
+</div>
+</div>
+<div class="chat-list" id="chat-list-container">
+<div id="loading-skeleton">
+<div class="sk-item"><div class="skeleton sk-avatar"></div><div class="sk-lines"><div class="skeleton sk-line"></div><div class="skeleton sk-line"></div></div></div>
+<div class="sk-item"><div class="skeleton sk-avatar"></div><div class="sk-lines"><div class="skeleton sk-line"></div><div class="skeleton sk-line"></div></div></div>
+</div>
+<div id="chat-list-content" style="display: none;">
+<div class="list-section-title">Grup &amp; Divisi</div>
+<div id="list-group"></div>
+<div id="section-admin">
+<div class="list-section-title">Admin &amp; Support</div>
+<div id="list-admin"></div>
+</div>
+<div class="list-section-title">Kontak Personal</div>
+<div id="list-private"></div>
+</div>
+</div>
+</aside>
+<main class="chat-main">
+<div class="welcome-screen" id="welcome-screen">
+<i class="fa-regular fa-comments welcome-icon"></i>
+<h2>Mulai Kolaborasi</h2>
+<p>Pilih kontak di sebelah kiri (atau klik tombol Chat di atas) untuk memulai.</p>
+</div>
+<div id="active-chat-interface" style="display: none; height: 100%; flex-direction: column;">
+<header class="chat-header">
+<button class="back-btn" id="back-to-list"><i class="fa-solid fa-arrow-left"></i></button>
+<div class="avatar" id="header-avatar" style="width: 36px; height: 36px; font-size: 0.9rem;"></div>
+<div class="header-info" style="margin-left: 10px;">
+<h3 id="header-name" style="font-size:1rem;">Nama Chat</h3>
+<p id="header-status" style="font-size:0.75rem; color:gray;">Online</p>
+</div>
+</header>
+<div class="messages-container" id="messages-container">
+</div>
+<div class="input-area" id="input-area">
+<textarea id="message-input" oninput="autoExpand(this)" placeholder="Ketik pesan..." rows="1"></textarea>
+<button disabled="" id="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+</div>
+</div>
+</main>
+</div>
+<div id="toast" style="position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#333; color:white; padding:10px 20px; border-radius:20px; opacity:0; pointer-events:none; transition:opacity 0.3s; z-index:200;">
+<span id="toast-msg">Notif</span>
+</div>
+<script src="../assets/js/chat.js" type="module"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>

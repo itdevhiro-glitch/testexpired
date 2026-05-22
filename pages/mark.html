@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Z-MARK PRO - Marketing Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+<link href="../assets/css/mark.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div class="loading-screen" id="loading-screen">
+<div class="spinner"></div>
+<p style="margin-top:15px; font-size:14px; font-weight:500;">Memuat Akses Marketing...</p>
+</div>
+<div id="main-content" style="display: none;">
+<nav class="navbar">
+<div class="nav-brand">
+<h1>Z-MARK PRO</h1>
+<span>Inventory System</span>
+</div>
+<div class="nav-actions">
+<button class="btn-nav btn-report" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i></button>
+<a class="btn-nav" href="dashboard.html"><i class="fa-solid fa-arrow-left"></i></a>
+</div>
+</nav>
+<div class="container">
+<div class="stats-container">
+<div class="stat-card">
+<div class="stat-icon bg-blue"><i class="fa-solid fa-box"></i></div>
+<div class="stat-info">
+<h3 id="statItems">0</h3> <p>Total Barang</p>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon bg-orange"><i class="fa-solid fa-cubes"></i></div>
+<div class="stat-info">
+<h3 id="statStock">0</h3> <p>Total Stok</p>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon bg-red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+<div class="stat-info">
+<h3 id="statLow">0</h3> <p>Menipis</p>
+</div>
+</div>
+</div>
+<div class="toolbar">
+<div class="search-wrapper">
+<i class="fa-solid fa-search"></i>
+<input class="search-input" id="searchInput" placeholder="Cari barang atau SKU..." type="text"/>
+</div>
+<select class="filter-select" id="filterCategory">
+<option value="All">Semua Kategori</option>
+<option value="Kartu Nama">Kartu Nama</option>
+<option value="Cetak">Cetak &amp; Dokumen</option>
+<option value="Merchandise">Merchandise &amp; Souvenir</option>
+<option value="Display">Display &amp; Booth</option>
+<option value="Elektronik">Elektronik &amp; Gadget</option>
+<option value="Seragam">Seragam &amp; Pakaian</option>
+<option value="Stationery">Stationery (ATK)</option>
+<option value="Event">Perlengkapan Event</option>
+<option value="Lainnya">Lainnya</option>
+</select>
+</div>
+<div id="inventoryLoader" style="text-align:center; padding:40px;">
+<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gray); font-size:24px;"></i>
+</div>
+<div class="inventory-list" id="inventoryList"></div>
+</div>
+<button class="fab" onclick="window.openManageModal()">
+<i class="fa-solid fa-plus"></i>
+</button>
+</div>
+<div class="modal-overlay" id="modalManage">
+<div class="modal-container">
+<div class="modal-header">
+<h3 class="modal-title" id="manageTitle">Tambah Barang</h3>
+<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<input id="manageId" type="hidden"/>
+<label class="form-label">Nama Barang</label>
+<input class="form-input" id="itemName" placeholder="Contoh: Kartu Nama Sales" type="text"/>
+<div class="form-row">
+<div style="grid-column: span 2;">
+<label class="form-label">Kategori</label>
+<select class="form-input" id="itemCat">
+<option value="Kartu Nama">Kartu Nama</option>
+<option value="Cetak">Cetak (Brosur/Flyer/Katalog)</option>
+<option value="Merchandise">Merchandise (Mug/Tumblr/Payung)</option>
+<option value="Display">Display (Banner/Backdrop/Booth)</option>
+<option value="Elektronik">Elektronik (Tablet/Speaker/TV)</option>
+<option value="Seragam">Seragam / Kaos Tim</option>
+<option value="Stationery">Stationery / Alat Tulis Kantor</option>
+<option value="Event">Perlengkapan Event / Dekorasi</option>
+<option value="Lainnya">Lainnya</option>
+</select>
+</div>
+</div>
+<div class="form-row">
+<div>
+<label class="form-label">SKU (Kode)</label>
+<input class="form-input" id="itemSku" placeholder="MRK-001" type="text"/>
+</div>
+<div>
+<label class="form-label">Lokasi Rak</label>
+<input class="form-input" id="itemLoc" placeholder="Rak A1" type="text"/>
+</div>
+</div>
+<div class="form-row">
+<div>
+<label class="form-label">Stok Awal</label>
+<input class="form-input" id="itemStock" type="number" value="0"/>
+</div>
+<div>
+<label class="form-label">Satuan</label>
+<select class="form-input" id="itemUnit">
+<option value="Pcs">Pcs</option>
+<option value="Pack">Pack</option>
+<option value="Unit">Unit</option>
+</select>
+</div>
+</div>
+<button class="btn-full btn-primary" onclick="saveItem()">Simpan Data</button>
+<button class="btn-full btn-danger" id="btnDelete" onclick="deleteItem()" style="display:none;">Hapus Barang</button>
+</div>
+</div>
+<div class="modal-overlay" id="modalTrans">
+<div class="modal-container">
+<div class="modal-header">
+<h3 class="modal-title">Update Stok</h3>
+<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<p id="transItemInfo" style="margin-bottom:15px; font-size:14px; color:var(--gray);"></p>
+<div class="type-selector">
+<div class="type-opt active-out" id="optOut" onclick="setTransType('OUT')">Keluar (Pakai)</div>
+<div class="type-opt" id="optIn" onclick="setTransType('IN')">Masuk (Restock)</div>
+</div>
+<label class="form-label">Jumlah &amp; Satuan</label>
+<div class="input-group">
+<input class="form-input" id="transQty" placeholder="0" style="font-size:18px; font-weight:700;" type="number"/>
+<select class="form-input" id="transUnit" style="font-weight:600;">
+<option value="Pcs">Pcs</option>
+<option value="Pack">Pack</option>
+<option value="Unit">Unit</option>
+</select>
+</div>
+<label class="form-label">Catatan (Wajib)</label>
+<input class="form-input" id="transNote" placeholder="Contoh: Event JCC / Restock Vendor..." type="text"/>
+<button class="btn-full btn-primary" onclick="processTransaction()">Konfirmasi</button>
+</div>
+</div>
+<div class="modal-overlay" id="modalHistory">
+<div class="modal-container">
+<div class="modal-header">
+<h3 class="modal-title">Riwayat Barang</h3>
+<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div style="background:var(--light); padding:10px; border-radius:8px; margin-bottom:15px;">
+<h4 id="histItemName" style="margin:0; font-size:14px;">Nama Barang</h4>
+<span id="histItemSku" style="font-size:11px; color:var(--gray); font-family:monospace;">SKU</span>
+</div>
+<div id="historyLoader" style="text-align:center; padding:20px;">
+<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gray);"></i>
+</div>
+<div class="history-list" id="historyListContainer"></div>
+</div>
+</div>
+<div class="modal-overlay" id="modalReport">
+<div class="modal-container">
+<div class="modal-header">
+<h3 class="modal-title">Export Data</h3>
+<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<p style="font-size:13px; color:var(--gray); margin-bottom:20px;">Unduh laporan untuk kebutuhan administrasi atau analisa Finance.</p>
+<div class="report-section">
+<span class="report-label">Laporan PDF (Print Ready)</span>
+<div class="report-grid">
+<button class="btn-report-opt btn-report-pdf" onclick="generateReport('daily')">
+<i class="fa-regular fa-calendar-check"></i>
+<span>Harian</span>
+</button>
+<button class="btn-report-opt btn-report-pdf" onclick="generateReport('monthly')">
+<i class="fa-regular fa-calendar-days"></i>
+<span>Bulanan</span>
+</button>
+<button class="btn-report-opt btn-report-pdf" onclick="generateReport('yearly')">
+<i class="fa-regular fa-calendar"></i>
+<span>Tahunan</span>
+</button>
+</div>
+</div>
+<div class="report-section" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+<span class="report-label">Data Excel</span>
+<div class="report-grid">
+<button class="btn-report-opt btn-report-excel" onclick="generateExcel('daily')">
+<i class="fa-solid fa-file-excel"></i>
+<span>Harian .xlsx</span>
+</button>
+<button class="btn-report-opt btn-report-excel" onclick="generateExcel('monthly')">
+<i class="fa-solid fa-file-excel"></i>
+<span>Bulanan .xlsx</span>
+</button>
+<button class="btn-report-opt btn-report-excel" onclick="generateExcel('yearly')">
+<i class="fa-solid fa-file-excel"></i>
+<span>Tahunan .xlsx</span>
+</button>
+</div>
+</div>
+<div id="reportLoader" style="text-align:center; padding:15px; display:none;">
+<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--primary);"></i> Memproses Data...
+            </div>
+</div>
+</div>
+<div class="toast" id="toast">
+<i class="fa-solid fa-info-circle"></i> <span id="toastMsg">Notification</span>
+</div>
+<script src="../assets/js/mark.js" type="module"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>

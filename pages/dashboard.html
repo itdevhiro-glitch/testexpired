@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Dashboard - Zeppelin Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+
+<link href="../assets/css/dashboard.css" rel="stylesheet"/>
+<style>
+.system-expiry-banner{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(90deg,#7f1d1d,#991b1b,#dc2626);
+    color: white;
+    z-index: 999999;
+    padding: 12px 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+    animation: pulseBanner 2s infinite;
+}
+.system-expiry-banner strong{
+    font-size: 15px;
+}
+body{
+    padding-top: 70px !important;
+}
+.system-locked-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.96);
+    z-index: 99999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.system-locked-box{
+    max-width: 700px;
+    width: 100%;
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 40px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+}
+.system-locked-box h1{
+    font-size: 34px;
+    margin-bottom: 15px;
+    color: #ef4444;
+}
+.system-locked-box p{
+    color: #d1d5db;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.system-locked-box .wa-contact{
+    display: inline-block;
+    margin-top: 15px;
+    background: #22c55e;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+@keyframes pulseBanner {
+    0% { opacity: 1; }
+    50% { opacity: 0.82; }
+    100% { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+<div class="loading-screen" id="loading-screen">
+<div class="spinner"></div>
+<p>Memuat Portal...</p>
+</div>
+<div id="main-content" style="display: none;">
+<nav class="navbar">
+<div class="nav-container">
+<a class="nav-logo" href="dashboard.html">
+<i class="fa-solid fa-gear"></i> ZEPPELIN
+                </a>
+<div class="nav-right">
+<div class="nav-shortcuts">
+<a class="shortcut-icon" href="user.html" target="_blank">
+<i class="fa-solid fa-headset"></i>
+<span class="tooltip">Layanan IT</span>
+</a>
+<a class="shortcut-icon" href="chat.html">
+<i class="fa-solid fa-comments"></i>
+<span class="tooltip">Pusat Kolaborasi</span>
+</a>
+<a class="shortcut-icon hidden-non-marketing" href="mark.html" id="nav-marketing-link">
+<i class="fa-solid fa-chart-line"></i>
+<span class="tooltip">Marketing Stock</span>
+</a>
+<a class="shortcut-icon" href="#">
+<i class="fa-solid fa-boxes-stacked"></i>
+<span class="tooltip">Stok</span>
+</a>
+</div>
+<div class="nav-profile">
+<div id="user-greeting">Halo, <span>Tamu</span></div>
+<a class="logout-button" href="profile.html" style="border: 1px solid #e5e7eb; color: #4b5563; text-decoration: none; margin-right: 5px;" title="Pengaturan Akun">
+<i class="fa-solid fa-user-gear"></i>
+</a>
+<button class="logout-button" id="logout-btn">
+<i class="fa-solid fa-right-from-bracket"></i> Keluar
+                        </button>
+</div>
+<button class="menu-toggle" id="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+</div>
+</div>
+</nav>
+<div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+<div class="mobile-menu" id="mobile-menu">
+<div class="mobile-menu-header">
+<span class="mobile-menu-title">Menu</span>
+<button class="close-menu-btn" id="close-menu-btn">×</button>
+</div>
+<a href="user.html" target="_blank"><i class="fa-solid fa-headset"></i> Layanan IT</a>
+<a href="chat.html"><i class="fa-solid fa-comments"></i> Pusat Kolaborasi</a>
+<a href="permintaanuser.html"><i class="fa-solid fa-laptop-file"></i> Permintaan Perangkat</a>
+<a href="#" id="mobile-hr-link"><i class="fa-solid fa-pen-to-square"></i> Manajemen Pengumuman</a>
+<hr/>
+<a class="hidden-non-marketing" href="mark.html" id="mobile-marketing-link"><i class="fa-solid fa-chart-line"></i> Marketing Stock</a>
+<a href="#"><i class="fa-solid fa-boxes-stacked"></i> Cek Stok</a>
+<hr/>
+<a href="profile.html"><i class="fa-solid fa-user-gear"></i> Pengaturan Akun</a>
+<a href="#" id="logout-btn-mobile" style="color: #D9232D;"><i class="fa-solid fa-right-from-bracket" style="color: #D9232D;"></i> Keluar</a>
+</div>
+<section class="hero">
+<div class="container hero-container">
+<div class="hero-text fade-in-up">
+<h1>Selamat Datang di <span>Portal Zeppelin</span></h1>
+<p>Semua aplikasi dan alat bantu yang Anda butuhkan untuk produktivitas, kini terintegrasi di satu tempat.</p>
+<a class="hero-button" href="#portal-section">Lihat Aplikasi Anda</a>
+</div>
+<div class="hero-visual fade-in-up">
+<div class="icon-spinner">
+<i class="fa-solid fa-blender-phone center-icon"></i>
+</div>
+</div>
+</div>
+</section>
+<section class="portal-section" id="portal-section">
+<div class="container">
+<div class="portal-grid">
+<a class="portal-card fade-in-up" href="user.html" style="transition-delay: 100ms;" target="_blank">
+<div class="portal-icon icon-red">
+<i class="fa-solid fa-headset"></i>
+</div>
+<h3>Layanan IT (Helpdesk)</h3>
+<p>Buat laporan kendala atau ajukan permintaan dukungan teknis baru.</p>
+<span class="portal-link">Buka Aplikasi <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+<a class="portal-card fade-in-up" href="chat.html" style="transition-delay: 150ms;">
+<div class="portal-icon icon-green">
+<i class="fa-solid fa-comments"></i>
+</div>
+<h3>Pusat Kolaborasi</h3>
+<p>Fitur komunikasi internal: chat antar karyawan, grup departemen, dan Admin.</p>
+<span class="portal-link">Buka Aplikasi <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+<a class="portal-card fade-in-up" href="lembur.html" style="transition-delay: 175ms;">
+<div class="portal-icon icon-orange">
+<i class="fa-solid fa-clock"></i>
+</div>
+<h3>Pengajuan Lembur</h3>
+<p>Akses lembur untuk semua divisi. Ajukan lembur dengan cepat dari dashboard.</p>
+<span class="portal-link">Buka Lembur <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+<a class="portal-card fade-in-up hidden-non-finance" href="pettycash.html" id="petty-cash-card" style="transition-delay: 200ms;">
+<div class="portal-icon icon-green" style="background-color: #ecfdf5; color: #059669;">
+<i class="fa-solid fa-wallet"></i>
+</div>
+<h3>Petty Cash</h3>
+<p>Buku kas operasional. Catat pemasukan dan pengeluaran harian.</p>
+<span class="portal-link">Buka Buku Kas <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+<a class="portal-card fade-in-up hidden-non-finance" href="finance.html" id="finance-card" style="transition-delay: 250ms;">
+<div class="portal-icon icon-green">
+<i class="fa-solid fa-chart-pie"></i>
+</div>
+<h3>Finance Workspace</h3>
+<p>Manajemen invoice, reimbursement, data pelanggan, dan pajak.</p>
+<span class="portal-link">Buka Workspace <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+<a class="portal-card fade-in-up" href="#" id="manage-content-card" style="transition-delay: 300ms;">
+<div class="portal-icon icon-blue"> <i class="fa-solid fa-pen-to-square"></i></div>
+<h3>Manajemen Pengumuman</h3> <p>Hanya untuk HRD. Update pengumuman perusahaan terbaru.</p>
+<span class="portal-link">Buka Halaman <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+<a class="portal-card fade-in-up" href="permintaanuser.html" style="transition-delay: 350ms;">
+<div class="portal-icon icon-orange">
+<i class="fa-solid fa-laptop-file"></i>
+</div>
+<h3>Permintaan Perangkat</h3>
+<p>Ajukan permintaan perangkat IT baru, upgrade, atau aksesori.</p>
+<span class="portal-link">Buka Aplikasi <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+<a class="portal-card fade-in-up hidden-non-marketing" href="mark.html" id="marketing-card" style="transition-delay: 400ms;">
+<div class="portal-icon icon-cyan">
+<i class="fa-solid fa-chart-line"></i>
+</div>
+<h3>Marketing Stock</h3>
+<p>Manajemen stok khusus untuk keperluan promosi dan aktivitas pemasaran.</p>
+<span class="portal-link">Buka Aplikasi <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+<a class="portal-card fade-in-up hidden-non-it" href="https://itdevhiro-glitch.github.io/itteam/tiketing.html" id="it-ticket-card" style="transition-delay: 450ms;" target="_blank">
+<div class="portal-icon icon-gray">
+<i class="fa-solid fa-screwdriver-wrench"></i>
+</div>
+<h3>IT Team Panel</h3>
+<p>Panel Penanganan Tiket (Ticketing Handle).</p>
+<span class="portal-link">Buka Panel <i class="fa-solid fa-arrow-right"></i></span>
+</a>
+</div>
+</div>
+</section>
+<main class="main-content container">
+<div class="main-grid">
+<div class="main-column-left">
+<div class="fade-in-up" style="transition-delay: 100ms;">
+<h2 class="section-title">Pengumuman Perusahaan</h2>
+<div class="widget-card">
+<div class="widget-body">
+<ul id="announcement-list">
+<li class="announcement-empty">Memuat pengumuman...</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="fade-in-up" style="transition-delay: 200ms;">
+<h2 class="section-title">Tugas Saya</h2>
+<div class="widget-card">
+<div class="widget-body">
+<div class="todo-input-group">
+<input id="todo-input" placeholder="Tambah tugas baru..." type="text"/>
+<button id="add-todo-btn"><i class="fa-solid fa-plus"></i></button>
+</div>
+<ul id="todo-list">
+<li class="todo-empty">Tidak ada tugas.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="main-column-right">
+<div class="fade-in-up" style="transition-delay: 100ms;">
+<h2 class="section-title">Waktu &amp; Kalender</h2>
+<div class="widget-card">
+<div class="widget-body" id="calendar-widget">
+<div id="clock-widget">
+<div class="digital-clock">00:00:00</div>
+<div class="digital-date">Memuat tanggal...</div>
+</div>
+<div class="calendar-header">
+<div class="cal-nav">
+<button id="prev-month"><i class="fa-solid fa-chevron-left"></i></button>
+</div>
+<div id="month-year">...</div>
+<div class="cal-nav">
+<button id="next-month"><i class="fa-solid fa-chevron-right"></i></button>
+</div>
+</div>
+<div class="calendar-grid" id="calendar-days">
+</div>
+</div>
+</div>
+</div>
+<div class="fade-in-up" style="transition-delay: 200ms;">
+<h2 class="section-title">Akses Cepat</h2>
+<div class="portal-list">
+<a href="chat.html">
+<i class="link-icon icon-green fa-solid fa-comments"></i>
+<div class="link-text">
+<h3>Pusat Kolaborasi</h3>
+<p>Chat internal &amp; grup.</p>
+</div>
+<i class="link-arrow fa-solid fa-arrow-right"></i>
+</a>
+<a href="#" id="hr-quick-link"> <i class="link-icon icon-blue fa-solid fa-pen-to-square"></i> <div class="link-text">
+<h3>Buat Pengumuman</h3>
+<p>Khusus HRD.</p>
+</div>
+<i class="link-arrow fa-solid fa-arrow-right"></i>
+</a>
+<a href="permintaanuser.html">
+<i class="link-icon icon-orange fa-solid fa-laptop-file"></i>
+<div class="link-text">
+<h3>Permintaan Perangkat</h3>
+<p>Form permintaan baru.</p>
+</div>
+<i class="link-arrow fa-solid fa-arrow-right"></i>
+</a>
+<a href="BAST.html">
+<i class="link-icon icon-orange fa-solid fa-file-signature"></i>
+<div class="link-text">
+<h3>BAST Perangkat IT</h3>
+<p>Berita Acara Serah Terima.</p>
+</div>
+<i class="link-arrow fa-solid fa-arrow-right"></i>
+</a>
+<a href="https://itdevhiro-glitch.github.io/widget/excel inspector.html" target="_blank">
+<i class="link-icon icon-orange fa-solid fa-file-excel"></i>
+<div class="link-text">
+<h3>Excel Inspector</h3>
+<p>Cek validasi data Excel.</p>
+</div>
+<i class="link-arrow fa-solid fa-arrow-right"></i>
+</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="footer">
+<p>© 2025 Zeppelin Manufacturing.</p>
+<p>Portal dikelola oleh <a href="https://itdevhiro-glitch.github.io/itteam/" target="_blank">Tim IT</a>.</p>
+</footer>
+</div>
+<div class="modal-backdrop" id="calendar-modal-backdrop"></div>
+<div class="modal-content" id="calendar-modal-content">
+<div class="modal-header">
+<h3 id="modal-date-title">Detail Tanggal</h3>
+<button id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="modal-body">
+<div id="modal-holiday-info">
+<i class="fa-solid fa-star"></i>
+<span id="modal-holiday-name">Hari libur.</span>
+</div>
+<h4>Catatan:</h4>
+<div id="modal-notes-list">
+<div class="notes-empty">Tidak ada catatan.</div>
+</div>
+<div class="modal-form" style="margin-top: 15px;">
+<textarea id="note-textarea" placeholder="Tulis catatan..."></textarea>
+<button id="save-note-btn">Simpan</button>
+</div>
+</div>
+</div>
+<div class="toast-notification" id="toast-notification">
+<i class="fa-solid fa-circle-info"></i>
+<p>Akses Ditolak.</p>
+</div>
+<script src="../assets/js/dashboard.js" type="module"></script>
+
+<script>
+(function(){
+    const expiryDate = new Date("2026-06-07T00:00:00+07:00");
+    const now = new Date();
+
+    const banner = document.createElement("div");
+    banner.className = "system-expiry-banner";
+    banner.innerHTML = `
+        <strong>⚠ NOTICE SYSTEM</strong><br>
+        Masa aktif sistem / web ini akan berakhir pada <strong>6 Juni 2026</strong>.
+        Setelah tanggal tersebut sistem akan dikunci otomatis.
+        Hubungi <strong>082191847167</strong> untuk informasi lebih lanjut.
+    `;
+    document.body.appendChild(banner);
+
+    if(now >= expiryDate){
+        document.body.innerHTML = `
+            <div class="system-locked-overlay">
+                <div class="system-locked-box">
+                    <h1>SYSTEM LOCKED</h1>
+                    <p>
+                        Masa aktif sistem telah berakhir pada <strong>6 Juni 2026</strong>.
+                    </p>
+                    <p>
+                        Akses ke sistem ini telah dinonaktifkan secara otomatis.
+                    </p>
+                    <p>
+                        Silakan hubungi administrator untuk perpanjangan layanan atau informasi lebih lanjut.
+                    </p>
+                    <a class="wa-contact" href="https://wa.me/6282191847167" target="_blank">
+                        Hubungi WhatsApp Administrator
+                    </a>
+                </div>
+            </div>
+        `;
+        document.body.style.overflow = "hidden";
+    }
+})();
+</script>
+
+</body>
+</html>
