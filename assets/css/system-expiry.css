@@ -1,0 +1,170 @@
+/* =========================================================
+   System Notice & Access Lock
+   Berlaku sampai: 6 Juni 2026
+   Kontak: 082191847167
+   ========================================================= */
+:root{
+  --system-expiry-bg:#0f172a;
+  --system-expiry-card:#111827;
+  --system-expiry-border:rgba(255,255,255,.14);
+  --system-expiry-text:#f8fafc;
+  --system-expiry-muted:#cbd5e1;
+  --system-expiry-danger:#ef4444;
+  --system-expiry-warning:#f59e0b;
+  --system-expiry-success:#22c55e;
+}
+
+.system-expiry-notice{
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1120px, calc(100% - 28px));
+  z-index: 2147483000;
+  background: linear-gradient(135deg, rgba(15,23,42,.96), rgba(30,41,59,.96));
+  color: var(--system-expiry-text);
+  border: 1px solid var(--system-expiry-border);
+  border-left: 5px solid var(--system-expiry-warning);
+  box-shadow: 0 18px 45px rgba(0,0,0,.28);
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-family: Inter, Arial, sans-serif;
+  backdrop-filter: blur(14px);
+}
+.system-expiry-notice__inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.system-expiry-notice__title{
+  margin:0 0 4px;
+  font-size:14px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:800;
+}
+.system-expiry-notice__text{
+  margin:0;
+  font-size:13px;
+  line-height:1.55;
+  color:var(--system-expiry-muted);
+}
+.system-expiry-notice__date{
+  color:#fff;
+  font-weight:800;
+}
+.system-expiry-notice__actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+}
+.system-expiry-notice__badge{
+  white-space:nowrap;
+  padding:9px 12px;
+  border-radius:999px;
+  background:rgba(245,158,11,.14);
+  border:1px solid rgba(245,158,11,.35);
+  color:#fde68a;
+  font-size:12px;
+  font-weight:800;
+}
+.system-expiry-notice__wa,
+.system-lock__wa{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  text-decoration:none;
+  border-radius:999px;
+  background:linear-gradient(135deg,#16a34a,#22c55e);
+  color:#fff !important;
+  font-weight:800;
+  border:0;
+  box-shadow:0 10px 25px rgba(34,197,94,.25);
+}
+.system-expiry-notice__wa{
+  padding:10px 14px;
+  font-size:12px;
+  white-space:nowrap;
+}
+.system-expiry-lock{
+  position:fixed;
+  inset:0;
+  z-index:2147483647;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:24px;
+  background:
+    radial-gradient(circle at top left, rgba(239,68,68,.20), transparent 35%),
+    radial-gradient(circle at bottom right, rgba(37,99,235,.16), transparent 38%),
+    rgba(2,6,23,.97);
+  color:#fff;
+  font-family:Inter, Arial, sans-serif;
+}
+.system-expiry-lock__card{
+  width:min(760px, 100%);
+  background:linear-gradient(180deg,rgba(17,24,39,.98),rgba(15,23,42,.98));
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:28px;
+  padding:42px 36px;
+  text-align:center;
+  box-shadow:0 30px 90px rgba(0,0,0,.55);
+}
+.system-expiry-lock__eyebrow{
+  display:inline-flex;
+  margin-bottom:16px;
+  padding:8px 13px;
+  border-radius:999px;
+  background:rgba(239,68,68,.13);
+  border:1px solid rgba(239,68,68,.30);
+  color:#fecaca;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.10em;
+  text-transform:uppercase;
+}
+.system-expiry-lock h1{
+  margin:0 0 12px;
+  font-size:clamp(30px, 5vw, 52px);
+  letter-spacing:-.04em;
+  line-height:1.05;
+}
+.system-expiry-lock p{
+  margin:0 auto 12px;
+  max-width:620px;
+  color:#cbd5e1;
+  font-size:15px;
+  line-height:1.75;
+}
+.system-expiry-lock__date{
+  color:#fff;
+  font-weight:900;
+}
+.system-lock__wa{
+  margin-top:18px;
+  padding:14px 22px;
+  font-size:15px;
+}
+.system-expiry-lock__note{
+  margin-top:18px !important;
+  font-size:12px !important;
+  color:#94a3b8 !important;
+}
+body.system-expired{
+  overflow:hidden !important;
+}
+body.system-expired > *:not(.system-expiry-lock){
+  pointer-events:none !important;
+  user-select:none !important;
+}
+@media (max-width: 720px){
+  .system-expiry-notice{top:10px;padding:13px 14px;border-radius:14px;}
+  .system-expiry-notice__inner{align-items:flex-start;flex-direction:column;gap:12px;}
+  .system-expiry-notice__actions{width:100%;justify-content:space-between;}
+  .system-expiry-notice__wa{flex:1;}
+  .system-expiry-lock__card{padding:34px 22px;border-radius:22px;}
+}
