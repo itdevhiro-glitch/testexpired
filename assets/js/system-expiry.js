@@ -6,7 +6,7 @@
     displayDate: '6 Juni 2026',
     phoneText: '082191847167',
     waUrl: 'https://wa.me/6282191847167',
-    storageKey: 'zeppelin_expiry_notice_hidden_v3'
+    storageKey: 'zeppelin_expiry_notice_hidden_permanent_v5'
   };
 
   function ready(callback) {
@@ -40,16 +40,16 @@
   }
 
   function isNoticeHidden() {
-    return storageGet(CONFIG.storageKey) === '1';
+    return storageGet(CONFIG.storageKey) === '1' || storageGet('zeppelin_expiry_notice_hidden_v3') === '1' || storageGet('zeppelin_expiry_notice_hidden_v4') === '1';
   }
 
   function hideNotice() {
     storageSet(CONFIG.storageKey, '1');
-    var notice = document.querySelector('.system-expiry-notice');
-    if (notice) {
+    var notices = document.querySelectorAll('.system-expiry-notice');
+    notices.forEach(function (notice) {
       notice.classList.add('is-hiding');
-      window.setTimeout(function () { if (notice.parentNode) notice.remove(); }, 220);
-    }
+      window.setTimeout(function () { if (notice.parentNode) notice.remove(); }, 160);
+    });
   }
 
   function minimizeNotice() {
@@ -79,8 +79,8 @@
       '</div>';
     wrapper.addEventListener('click', function (event) {
       var target = event.target;
-      if (target && target.closest('[data-expiry-hide]')) hideNotice();
-      if (target && target.closest('[data-expiry-minimize]')) minimizeNotice();
+      if (target && target.closest('[data-expiry-hide]')) { event.preventDefault(); event.stopPropagation(); hideNotice(); return; }
+      if (target && target.closest('[data-expiry-minimize]')) { event.preventDefault(); event.stopPropagation(); minimizeNotice(); return; }
     });
     return wrapper;
   }
@@ -141,5 +141,9 @@
     }
   }
 
+  document.addEventListener('click', function(event){
+    var target = event.target;
+    if (target && target.closest && target.closest('[data-expiry-hide]')) { event.preventDefault(); event.stopPropagation(); hideNotice(); }
+  }, true);
   ready(init);
 })();

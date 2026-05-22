@@ -71,3 +71,35 @@ body.system-expired{overflow:hidden !important;}body.system-expired > *:not(.sys
 @keyframes catBounce{0%,100%{transform:translateY(0) rotate(-1deg);}50%{transform:translateY(-10px) rotate(1deg);}}@keyframes catBlink{0%,92%,100%{transform:scaleY(1);}95%{transform:scaleY(.08);}}@keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-18px) rotate(8deg);}}@keyframes systemBgMove{from{background-position:0 0,0 0;}to{background-position:38px 38px,88px 88px;}}@keyframes cardPop{from{opacity:0;transform:translateY(18px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}
 @media (max-width:720px){.system-expiry-notice{right:12px;bottom:12px;width:min(330px, calc(100vw - 24px));}.system-expiry-notice__body{align-items:flex-start;flex-direction:column;}.system-expiry-notice__wa{width:100%;}.system-expiry-lock__card{padding:34px 20px;border-radius:26px;}.system-expiry-float{font-size:30px;}.system-expiry-lock__cat{width:132px;height:112px}.cat-face{width:118px;height:95px}}
 @media (prefers-reduced-motion:reduce){.system-expiry-notice,.system-expiry-lock:before,.system-expiry-lock__card,.system-expiry-lock__cat,.cat-eye,.system-expiry-float{animation:none !important;}}
+
+/* Zeppelin safer notice: tidak ganggu konten, bisa benar-benar ditutup */
+.system-expiry-notice{
+  right:16px !important;
+  bottom:16px !important;
+  width:min(315px, calc(100vw - 24px)) !important;
+  border-left:0 !important;
+  border-top:3px solid #F37321 !important;
+  border-radius:18px !important;
+  box-shadow:0 16px 40px rgba(217,35,45,.14) !important;
+  z-index:999999 !important;
+}
+.system-expiry-notice__head{padding:9px 9px 7px 11px !important;}
+.system-expiry-notice__title{font-size:11px !important;color:#D9232D !important;}
+.system-expiry-notice__badge{background:#fff1f2 !important;border-color:#fecdd3 !important;color:#be123c !important;}
+.system-expiry-notice__body{padding:0 11px 11px !important;}
+.system-expiry-notice__text{font-size:11.5px !important;line-height:1.4 !important;}
+.system-expiry-notice__icon{
+  width:28px !important;
+  height:28px !important;
+  background:#fff !important;
+  border:1px solid rgba(217,35,45,.12) !important;
+  color:#D9232D !important;
+  z-index:2 !important;
+}
+.system-expiry-notice__icon:hover{background:#fff1f2 !important;}
+.system-expiry-notice.is-minimized{opacity:.72 !important;}
+@media (max-width:720px){
+  .system-expiry-notice{right:10px !important;bottom:10px !important;width:min(292px, calc(100vw - 20px)) !important;}
+  .system-expiry-notice__body{display:none !important;}
+  .system-expiry-notice:not(.is-minimized) .system-expiry-notice__body{display:flex !important;}
+}
