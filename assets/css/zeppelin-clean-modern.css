@@ -232,3 +232,175 @@ ul li,.announcement-item,.todo-item,.list-item{
 @media (prefers-reduced-motion:reduce){
   *{animation:none !important;transition:none !important;scroll-behavior:auto !important;}
 }
+
+/* =========================================================
+   Zeppelin Contrast & Readability Patch
+   Fokus: teks loading/status, placeholder, badge, tabel, modal.
+   ========================================================= */
+:root{
+  --zep-ink:#111827;
+  --zep-ink-soft:#374151;
+  --zep-ink-muted:#4b5563;
+  --zep-soft-bg:#fff7ed;
+  --zep-soft-bg-2:#fff1f2;
+  --zep-line:#f1d6cc;
+}
+
+body, main, section, article, .container, .content, .main-content{
+  color:var(--zep-ink) !important;
+}
+
+p, span, small, div, li, td, th,
+.page-subtitle, .subtitle, .section-desc, .desc, .description,
+.card-meta, .meta, .muted, .helper-text, .empty-text,
+.history-note, .history-user, .stock-val, .stock-badge,
+.stat-info p, .card-sku, .footer-info{
+  color:var(--zep-ink-muted) !important;
+}
+
+h1,h2,h3,h4,h5,h6,
+.card-title,.modal-title,.section-title,.page-title,
+.stat-info h3,.history-title,label,.form-label{
+  color:var(--zep-ink) !important;
+}
+
+input::placeholder, textarea::placeholder, .search-input::placeholder{
+  color:#6b7280 !important;
+  opacity:1 !important;
+}
+
+/* Loading/status text jangan samar */
+.loading-screen,
+.loading-screen p,
+.loading-text,
+#loading-text,
+#loadingStatus,
+#loading-message,
+.status-message,
+.toast,
+.message-box,
+.alert,
+.empty-state,
+.empty-state p,
+.no-data,
+.no-data p{
+  color:#ffffff !important;
+  opacity:1 !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.22);
+}
+
+.loading-screen:not([style*="gradient"]):not(.fade-out){
+  background:linear-gradient(135deg,var(--zep-red),var(--zep-orange)) !important;
+}
+
+/* Kalau status muncul di atas card putih */
+.card .loading-text,
+.panel .loading-text,
+.table-card .loading-text,
+.content-card .loading-text,
+.empty-state,
+.no-data,
+#emptyState,
+#empty-state{
+  color:var(--zep-ink-soft) !important;
+  text-shadow:none !important;
+  background:#fff !important;
+  border:1px solid rgba(217,35,45,.12) !important;
+  border-radius:18px !important;
+}
+
+/* Badge lebih jelas */
+.badge,.pill,.status-pill,.stock-badge,.card-sku,.result-pill{
+  color:var(--zep-ink-soft) !important;
+  background:#fff7ed !important;
+  border:1px solid rgba(243,115,33,.22) !important;
+  font-weight:800 !important;
+}
+.badge-ok,.status-success,.success,.h-in{
+  background:#ecfdf5 !important;
+  color:#047857 !important;
+  border-color:#a7f3d0 !important;
+}
+.badge-low,.status-danger,.danger,.h-out{
+  background:#fff1f2 !important;
+  color:#be123c !important;
+  border-color:#fecdd3 !important;
+}
+.badge-warning,.status-warning,.warning{
+  background:#fffbeb !important;
+  color:#92400e !important;
+  border-color:#fde68a !important;
+}
+
+/* Tabel dan list dibuat lebih adem */
+table, .table-wrapper, .table-card{
+  color:var(--zep-ink) !important;
+}
+th{
+  color:#7c2d12 !important;
+  background:#fff3e9 !important;
+}
+td{
+  color:var(--zep-ink-soft) !important;
+  background:#ffffff !important;
+}
+tr:hover td{
+  background:#fffaf7 !important;
+}
+
+/* Tombol secondary jangan abu-abu samar */
+.btn-secondary,.secondary-btn,.btn-nav,.mini-action,.filter-btn,.btn-act{
+  color:var(--zep-ink-soft) !important;
+  background:#fff7ed !important;
+  border:1px solid rgba(243,115,33,.22) !important;
+  font-weight:800 !important;
+}
+.btn-secondary:hover,.secondary-btn:hover,.btn-nav:hover,.mini-action:hover,.filter-btn:hover,.btn-act:hover{
+  color:var(--zep-red) !important;
+  background:#fff1f2 !important;
+  border-color:rgba(217,35,45,.28) !important;
+}
+.btn-primary,.primary-btn,.submit-btn,.save-btn,.hero-button,
+button[type="submit"]{
+  color:#ffffff !important;
+  text-shadow:0 1px 1px rgba(0,0,0,.12);
+}
+
+/* Modal overlay & form text lebih kebaca */
+.modal-overlay,.modal-backdrop{
+  background:rgba(17,24,39,.58) !important;
+}
+.modal-container,.modal-content,.modal-card{
+  color:var(--zep-ink) !important;
+  background:#ffffff !important;
+}
+.form-input,.form-control,input,select,textarea{
+  color:var(--zep-ink) !important;
+  background:#ffffff !important;
+  border-color:#ead7cf !important;
+}
+
+/* Link merah tetap kontras, tidak terlalu neon */
+a, .portal-link{
+  color:#b91c1c !important;
+}
+a:hover, .portal-link:hover{
+  color:#7f1d1d !important;
+}
+
+/* Icon background jangan bikin teks/ikon tenggelam */
+.stat-icon,.card-icon,.portal-icon,.link-icon{
+  color:#b91c1c !important;
+  background:linear-gradient(135deg,#fff1f2,#fff7ed) !important;
+}
+
+/* Area gelap/gradient tetap putih terang */
+.hero, .zmark-hero, .loading-screen, .message.sent, .chat-bubble.sent, .bubble.me,
+.nav-link.active,.menu-item.active,.sidebar a.active{
+  color:#fff !important;
+}
+.hero *, .zmark-hero *, .loading-screen *,
+.message.sent *, .chat-bubble.sent *, .bubble.me *,
+.nav-link.active *, .menu-item.active *, .sidebar a.active *{
+  color:inherit !important;
+}
