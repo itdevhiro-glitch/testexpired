@@ -62,17 +62,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 
             document.getElementById('searchInput').addEventListener('input', renderList);
             document.getElementById('filterCategory').addEventListener('change', renderList);
-            document.getElementById('filterLocation').addEventListener('change', renderList);
-            document.getElementById('filterStatus').addEventListener('change', renderList);
-            document.getElementById('resetFilter').addEventListener('click', () => {
-                document.getElementById('searchInput').value = '';
-                document.getElementById('filterCategory').value = 'All';
-                document.getElementById('filterLocation').value = 'All';
-                document.getElementById('filterStatus').value = 'All';
-                renderList();
-            });
-            const menu = document.getElementById('zMenuBtn');
-            if (menu) menu.addEventListener('click', () => document.querySelector('.z-sidebar').classList.toggle('open')); 
         }
 
         function getIcon(cat) {
@@ -90,57 +79,61 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
             return icons[cat] || 'fa-solid fa-box';
         }
 
-        function getStatus(item) {
-            const stok = Number(item.stok || 0);
-            if (stok <= 0) return { key: 'empty', label: 'Habis', cls: 'status-empty' };
-            if (stok < 10) return { key: 'low', label: 'Stok Rendah', cls: 'status-low' };
-            return { key: 'ok', label: 'Tersedia', cls: 'status-ok' };
-        }
-
         function renderList() {
             const listEl = document.getElementById('inventoryList');
-            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+            const search = document.getElementById('searchInput').value.toLowerCase();
             const filter = document.getElementById('filterCategory').value;
-            const locFilter = document.getElementById('filterLocation').value;
-            const statusFilter = document.getElementById('filterStatus').value;
 
             const filtered = allData.filter(item => {
-                const status = getStatus(item).key;
-                const matchSearch = !search || (item.nama || '').toLowerCase().includes(search) || (item.sku || '').toLowerCase().includes(search) || (item.lokasi || '').toLowerCase().includes(search);
+                const matchSearch = item.nama.toLowerCase().includes(search) || (item.sku || '').toLowerCase().includes(search);
                 const matchFilter = filter === 'All' || item.kategori === filter;
-                const matchLoc = locFilter === 'All' || (item.lokasi || '-') === locFilter;
-                const matchStatus = statusFilter === 'All' || status === statusFilter;
-                return matchSearch && matchFilter && matchLoc && matchStatus;
+                return matchSearch && matchFilter;
             });
 
             listEl.innerHTML = '';
             if (filtered.length === 0) {
-                listEl.innerHTML = `<tr><td colspan="9"><div class="empty-state"><i class="fa-regular fa-folder-open fa-2x"></i><p>Tidak ada barang ditemukan.</p></div></td></tr>`;
+                listEl.innerHTML = `<div class="empty-state"><i class="fa-regular fa-folder-open fa-2x"></i><p>Tidak ada barang ditemukan.</p></div>`;
                 return;
             }
 
-            filtered.forEach((item, index) => {
-                const status = getStatus(item);
+            filtered.forEach(item => {
+                const isLow = item.stok < 5;
+                const badge = isLow ? `<span class="stock-badge badge-low">Menipis</span>` : `<span class="stock-badge badge-ok">Aman</span>`;
+                const icon = getIcon(item.kategori);
                 const unit = item.satuan || 'Pcs';
-                const sku = item.sku || `BRG-${String(index + 1).padStart(4, '0')}`;
+
                 listEl.innerHTML += `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${sku}</td>
-                        <td>${item.nama || '-'}</td>
-                        <td>${item.kategori || '-'}</td>
-                        <td>${item.lokasi || '-'}</td>
-                        <td>${Number(item.stok || 0)}</td>
-                        <td>${unit}</td>
-                        <td><span class="status-pill ${status.cls}">${status.label}</span></td>
-                        <td>
-                            <div class="action-row">
-                                <button class="icon-btn view" title="Riwayat" onclick="window.openHistory('${item.id}')"><i class="fa-regular fa-eye"></i></button>
-                                <button class="icon-btn edit" title="Edit" onclick="window.openManage('${item.id}')"><i class="fa-solid fa-pen"></i></button>
-                                <button class="icon-btn delete" title="Hapus" onclick="window.openManage('${item.id}')"><i class="fa-regular fa-trash-can"></i></button>
+                    <div class="card">
+                        <button class="btn-history-abs" onclick="window.openHistory('${item.id}')"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                        <button class="btn-edit-abs" onclick="window.openManage('${item.id}')"><i class="fa-solid fa-pen"></i></button>
+                        
+                        <div class="card-body">
+                            <div class="card-icon"><i class="${icon}"></i></div>
+                            <div class="card-content">
+                                <h3 class="card-title">${item.nama}</h3>
+                                ${item.sku ? `<span class="card-sku">${item.sku}</span>` : ''}
+                                <div class="card-meta">
+                                    <span>${item.kategori}</span>
+                                    ${item.lokasi ? `<span>• Rak ${item.lokasi}</span>` : ''}
+                                </div>
                             </div>
-                        </td>
-                    </tr>
+                        </div>
+                        <div class="stock-indicator">
+                            <span style="font-size:12px; color:var(--gray);">Stok Tersedia</span>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span class="stock-val">${item.stok} ${unit}</span>
+                                ${badge}
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-act btn-act-out" onclick="window.openTrans('${item.id}', 'OUT')">
+                                <i class="fa-solid fa-minus"></i> Pakai
+                            </button>
+                            <button class="btn-act btn-act-in" onclick="window.openTrans('${item.id}', 'IN')">
+                                <i class="fa-solid fa-plus"></i> Restock
+                            </button>
+                        </div>
+                    </div>
                 `;
             });
         }
@@ -148,20 +141,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
         function updateStats() {
             const total = allData.length;
             const stock = allData.reduce((a, b) => a + Number(b.stok || 0), 0);
-            const low = allData.filter(i => Number(i.stok || 0) > 0 && Number(i.stok || 0) < 10).length;
-            const empty = allData.filter(i => Number(i.stok || 0) <= 0).length;
-            const categories = new Set(allData.map(i => i.kategori).filter(Boolean));
-            const locations = [...new Set(allData.map(i => i.lokasi || '-').filter(Boolean))].sort();
-            const locSelect = document.getElementById('filterLocation');
-            const currentLoc = locSelect.value || 'All';
-            locSelect.innerHTML = '<option value="All">Semua Lokasi</option>' + locations.map(l => `<option value="${l}">${l}</option>`).join('');
-            if ([...locSelect.options].some(o => o.value === currentLoc)) locSelect.value = currentLoc;
-            document.getElementById('statItems').innerText = total.toLocaleString('id-ID');
-            document.getElementById('statStock').innerText = stock.toLocaleString('id-ID');
-            document.getElementById('statLow').innerText = low.toLocaleString('id-ID');
-            document.getElementById('statEmpty').innerText = empty.toLocaleString('id-ID');
-            document.getElementById('statCategory').innerText = categories.size.toLocaleString('id-ID');
-            document.getElementById('statLocation').innerText = locations.filter(l => l !== '-').length.toLocaleString('id-ID');
+            const low = allData.filter(i => i.stok < 5).length;
+            
+            document.getElementById('statItems').innerText = total;
+            document.getElementById('statStock').innerText = stock;
+            document.getElementById('statLow').innerText = low;
         }
 
         window.openManageModal = () => window.openManage();
