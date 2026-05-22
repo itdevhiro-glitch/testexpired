@@ -1,226 +1,178 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
-<title>Z-MARK PRO - Marketing Inventory</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-
-<link href="../assets/css/mark.css" rel="stylesheet"/><link rel="stylesheet" href="../assets/css/system-expiry.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Z-MARK - Stock Marketing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+  <link href="../assets/css/mark.css" rel="stylesheet" />
+  <link href="../assets/css/system-expiry.css" rel="stylesheet" />
 </head>
 <body>
-<div class="loading-screen" id="loading-screen">
-<div class="spinner"></div>
-<p style="margin-top:15px; font-size:14px; font-weight:500;">Memuat Akses Marketing...</p>
-</div>
-<div id="main-content" style="display: none;">
-<nav class="navbar">
-<div class="nav-brand">
-<h1>Z-MARK PRO</h1>
-<span>Inventory System</span>
-</div>
-<div class="nav-actions">
-<button class="btn-nav btn-report" onclick="openModal('modalReport')"><i class="fa-solid fa-file-export"></i></button>
-<a class="btn-nav" href="dashboard.html"><i class="fa-solid fa-arrow-left"></i></a>
-</div>
-</nav>
-<div class="container">
-<div class="stats-container">
-<div class="stat-card">
-<div class="stat-icon bg-blue"><i class="fa-solid fa-box"></i></div>
-<div class="stat-info">
-<h3 id="statItems">0</h3> <p>Total Barang</p>
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon bg-orange"><i class="fa-solid fa-cubes"></i></div>
-<div class="stat-info">
-<h3 id="statStock">0</h3> <p>Total Stok</p>
-</div>
-</div>
-<div class="stat-card">
-<div class="stat-icon bg-red"><i class="fa-solid fa-triangle-exclamation"></i></div>
-<div class="stat-info">
-<h3 id="statLow">0</h3> <p>Menipis</p>
-</div>
-</div>
-</div>
-<div class="toolbar">
-<div class="search-wrapper">
-<i class="fa-solid fa-search"></i>
-<input class="search-input" id="searchInput" placeholder="Cari barang atau SKU..." type="text"/>
-</div>
-<select class="filter-select" id="filterCategory">
-<option value="All">Semua Kategori</option>
-<option value="Kartu Nama">Kartu Nama</option>
-<option value="Cetak">Cetak &amp; Dokumen</option>
-<option value="Merchandise">Merchandise &amp; Souvenir</option>
-<option value="Display">Display &amp; Booth</option>
-<option value="Elektronik">Elektronik &amp; Gadget</option>
-<option value="Seragam">Seragam &amp; Pakaian</option>
-<option value="Stationery">Stationery (ATK)</option>
-<option value="Event">Perlengkapan Event</option>
-<option value="Lainnya">Lainnya</option>
-</select>
-</div>
-<div id="inventoryLoader" style="text-align:center; padding:40px;">
-<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gray); font-size:24px;"></i>
-</div>
-<div class="inventory-list" id="inventoryList"></div>
-</div>
-<button class="fab" onclick="window.openManageModal()">
-<i class="fa-solid fa-plus"></i>
-</button>
-</div>
-<div class="modal-overlay" id="modalManage">
-<div class="modal-container">
-<div class="modal-header">
-<h3 class="modal-title" id="manageTitle">Tambah Barang</h3>
-<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
-</div>
-<input id="manageId" type="hidden"/>
-<label class="form-label">Nama Barang</label>
-<input class="form-input" id="itemName" placeholder="Contoh: Kartu Nama Sales" type="text"/>
-<div class="form-row">
-<div style="grid-column: span 2;">
-<label class="form-label">Kategori</label>
-<select class="form-input" id="itemCat">
-<option value="Kartu Nama">Kartu Nama</option>
-<option value="Cetak">Cetak (Brosur/Flyer/Katalog)</option>
-<option value="Merchandise">Merchandise (Mug/Tumblr/Payung)</option>
-<option value="Display">Display (Banner/Backdrop/Booth)</option>
-<option value="Elektronik">Elektronik (Tablet/Speaker/TV)</option>
-<option value="Seragam">Seragam / Kaos Tim</option>
-<option value="Stationery">Stationery / Alat Tulis Kantor</option>
-<option value="Event">Perlengkapan Event / Dekorasi</option>
-<option value="Lainnya">Lainnya</option>
-</select>
-</div>
-</div>
-<div class="form-row">
-<div>
-<label class="form-label">SKU (Kode)</label>
-<input class="form-input" id="itemSku" placeholder="MRK-001" type="text"/>
-</div>
-<div>
-<label class="form-label">Lokasi Rak</label>
-<input class="form-input" id="itemLoc" placeholder="Rak A1" type="text"/>
-</div>
-</div>
-<div class="form-row">
-<div>
-<label class="form-label">Stok Awal</label>
-<input class="form-input" id="itemStock" type="number" value="0"/>
-</div>
-<div>
-<label class="form-label">Satuan</label>
-<select class="form-input" id="itemUnit">
-<option value="Pcs">Pcs</option>
-<option value="Pack">Pack</option>
-<option value="Unit">Unit</option>
-</select>
-</div>
-</div>
-<button class="btn-full btn-primary" onclick="saveItem()">Simpan Data</button>
-<button class="btn-full btn-danger" id="btnDelete" onclick="deleteItem()" style="display:none;">Hapus Barang</button>
-</div>
-</div>
-<div class="modal-overlay" id="modalTrans">
-<div class="modal-container">
-<div class="modal-header">
-<h3 class="modal-title">Update Stok</h3>
-<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
-</div>
-<p id="transItemInfo" style="margin-bottom:15px; font-size:14px; color:var(--gray);"></p>
-<div class="type-selector">
-<div class="type-opt active-out" id="optOut" onclick="setTransType('OUT')">Keluar (Pakai)</div>
-<div class="type-opt" id="optIn" onclick="setTransType('IN')">Masuk (Restock)</div>
-</div>
-<label class="form-label">Jumlah &amp; Satuan</label>
-<div class="input-group">
-<input class="form-input" id="transQty" placeholder="0" style="font-size:18px; font-weight:700;" type="number"/>
-<select class="form-input" id="transUnit" style="font-weight:600;">
-<option value="Pcs">Pcs</option>
-<option value="Pack">Pack</option>
-<option value="Unit">Unit</option>
-</select>
-</div>
-<label class="form-label">Catatan (Wajib)</label>
-<input class="form-input" id="transNote" placeholder="Contoh: Event JCC / Restock Vendor..." type="text"/>
-<button class="btn-full btn-primary" onclick="processTransaction()">Konfirmasi</button>
-</div>
-</div>
-<div class="modal-overlay" id="modalHistory">
-<div class="modal-container">
-<div class="modal-header">
-<h3 class="modal-title">Riwayat Barang</h3>
-<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
-</div>
-<div style="background:var(--light); padding:10px; border-radius:8px; margin-bottom:15px;">
-<h4 id="histItemName" style="margin:0; font-size:14px;">Nama Barang</h4>
-<span id="histItemSku" style="font-size:11px; color:var(--gray); font-family:monospace;">SKU</span>
-</div>
-<div id="historyLoader" style="text-align:center; padding:20px;">
-<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--gray);"></i>
-</div>
-<div class="history-list" id="historyListContainer"></div>
-</div>
-</div>
-<div class="modal-overlay" id="modalReport">
-<div class="modal-container">
-<div class="modal-header">
-<h3 class="modal-title">Export Data</h3>
-<button class="modal-close" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
-</div>
-<p style="font-size:13px; color:var(--gray); margin-bottom:20px;">Unduh laporan untuk kebutuhan administrasi atau analisa Finance.</p>
-<div class="report-section">
-<span class="report-label">Laporan PDF (Print Ready)</span>
-<div class="report-grid">
-<button class="btn-report-opt btn-report-pdf" onclick="generateReport('daily')">
-<i class="fa-regular fa-calendar-check"></i>
-<span>Harian</span>
-</button>
-<button class="btn-report-opt btn-report-pdf" onclick="generateReport('monthly')">
-<i class="fa-regular fa-calendar-days"></i>
-<span>Bulanan</span>
-</button>
-<button class="btn-report-opt btn-report-pdf" onclick="generateReport('yearly')">
-<i class="fa-regular fa-calendar"></i>
-<span>Tahunan</span>
-</button>
-</div>
-</div>
-<div class="report-section" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
-<span class="report-label">Data Excel</span>
-<div class="report-grid">
-<button class="btn-report-opt btn-report-excel" onclick="generateExcel('daily')">
-<i class="fa-solid fa-file-excel"></i>
-<span>Harian .xlsx</span>
-</button>
-<button class="btn-report-opt btn-report-excel" onclick="generateExcel('monthly')">
-<i class="fa-solid fa-file-excel"></i>
-<span>Bulanan .xlsx</span>
-</button>
-<button class="btn-report-opt btn-report-excel" onclick="generateExcel('yearly')">
-<i class="fa-solid fa-file-excel"></i>
-<span>Tahunan .xlsx</span>
-</button>
-</div>
-</div>
-<div id="reportLoader" style="text-align:center; padding:15px; display:none;">
-<i class="fa-solid fa-circle-notch fa-spin" style="color:var(--primary);"></i> Memproses Data...
+  <div class="z-loading" id="loading-screen">
+    <div class="z-spinner"></div>
+    <strong>Memuat Z-MARK</strong>
+    <span>Validasi akses marketing...</span>
+  </div>
+
+  <main class="z-app" id="main-content" hidden>
+    <aside class="z-sidebar" id="sidebar">
+      <div class="z-brand">
+        <div class="z-logo">Z</div>
+        <div>
+          <strong>ZEPPELIN</strong>
+          <span>WE CREATE SOLUTIONS</span>
+        </div>
+      </div>
+
+      <nav class="z-nav">
+        <button type="button" class="z-nav-item" data-nav="dashboard"><i class="fa-solid fa-gauge-high"></i> Dashboard</button>
+        <p>Stock Marketing</p>
+        <button type="button" class="z-nav-item active" data-view="items"><i class="fa-solid fa-cube"></i> Z-MARK</button>
+        <button type="button" class="z-nav-item" data-view="kategori"><i class="fa-solid fa-layer-group"></i> Kategori</button>
+        <button type="button" class="z-nav-item" data-view="lokasi"><i class="fa-solid fa-location-dot"></i> Lokasi</button>
+        <button type="button" class="z-nav-item" data-view="supplier"><i class="fa-solid fa-truck-fast"></i> Supplier</button>
+        <button type="button" class="z-nav-item" data-view="brand"><i class="fa-solid fa-tags"></i> Brand</button>
+        <button type="button" class="z-nav-item" data-view="satuan"><i class="fa-solid fa-ruler-combined"></i> Satuan</button>
+        <button type="button" class="z-nav-item" data-view="rak"><i class="fa-solid fa-table-cells"></i> Rak</button>
+        <p>Transaksi</p>
+        <button type="button" class="z-nav-item" data-view="penerimaan"><i class="fa-solid fa-square-plus"></i> Penerimaan</button>
+        <button type="button" class="z-nav-item" data-view="pengeluaran"><i class="fa-solid fa-square-minus"></i> Pengeluaran</button>
+        <button type="button" class="z-nav-item" data-view="mutasi"><i class="fa-solid fa-rotate"></i> Mutasi</button>
+        <p>Laporan</p>
+        <button type="button" class="z-nav-item" data-report="stock"><i class="fa-regular fa-file-lines"></i> Laporan Stok</button>
+        <button type="button" class="z-nav-item" data-report="items"><i class="fa-regular fa-file-excel"></i> Laporan Barang</button>
+        <button type="button" class="z-nav-item" data-report="mutasi"><i class="fa-regular fa-paste"></i> Laporan Mutasi</button>
+      </nav>
+      <div class="z-footer">© 2026 Zeppelin</div>
+    </aside>
+
+    <section class="z-main">
+      <header class="z-topbar">
+        <div class="z-crumb">
+          <button type="button" class="z-icon-btn" id="toggleSidebar" aria-label="Toggle menu"><i class="fa-solid fa-bars"></i></button>
+          <span><i class="fa-solid fa-chevron-right"></i> Z-MARK</span>
+        </div>
+        <div class="z-user">
+          <button type="button" class="z-bell" id="btnLowStock" title="Lihat stok rendah"><i class="fa-regular fa-bell"></i><b id="notifCount">0</b></button>
+          <div class="z-user-info"><strong id="userName">Admin Zmark</strong><span id="userDept">Marketing</span></div>
+          <button type="button" class="z-icon-btn" id="backDashboard" title="Kembali dashboard"><i class="fa-solid fa-chevron-down"></i></button>
+        </div>
+      </header>
+
+      <div class="z-content">
+        <section class="z-title-row">
+          <div>
+            <h1>Z-MARK</h1>
+            <p>Stock Marketing / Gudang Marketing</p>
+          </div>
+          <div class="z-actions">
+            <div class="z-dropdown-wrap">
+              <button type="button" class="z-btn z-btn-light" id="btnFilter"><i class="fa-solid fa-filter"></i> Filter <i class="fa-solid fa-chevron-down"></i></button>
+              <div class="z-menu" id="filterMenu">
+                <button type="button" data-quick="low">Stok Rendah</button>
+                <button type="button" data-quick="empty">Tidak Ada Stok</button>
+                <button type="button" data-quick="available">Tersedia</button>
+                <button type="button" data-quick="all">Semua Barang</button>
+              </div>
             </div>
-</div>
-</div>
-<div class="toast" id="toast">
-<i class="fa-solid fa-info-circle"></i> <span id="toastMsg">Notification</span>
-</div>
-<script src="../assets/js/mark.js" type="module"></script>
-<script defer src="../assets/js/system-expiry.js"></script>
+            <div class="z-dropdown-wrap">
+              <button type="button" class="z-btn z-btn-outline" id="btnExport"><i class="fa-regular fa-file-lines"></i> Export <i class="fa-solid fa-chevron-down"></i></button>
+              <div class="z-menu" id="exportMenu">
+                <button type="button" data-export="excel"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+                <button type="button" data-export="pdf"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                <button type="button" data-export="csv"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+              </div>
+            </div>
+            <button type="button" class="z-btn z-btn-primary" id="btnAdd"><i class="fa-solid fa-plus"></i> Tambah Barang</button>
+          </div>
+        </section>
+
+        <section class="z-stats" id="statsGrid"></section>
+
+        <section class="z-panel">
+          <div class="z-filterbar">
+            <div class="z-search"><input id="searchInput" type="search" placeholder="Cari nama barang, kode, barcode..." /><i class="fa-solid fa-magnifying-glass"></i></div>
+            <select id="filterCategory"><option value="all">Semua Kategori</option></select>
+            <select id="filterLocation"><option value="all">Semua Lokasi</option></select>
+            <select id="filterStatus"><option value="all">Semua Status</option><option value="available">Tersedia</option><option value="low">Stok Rendah</option><option value="empty">Habis</option></select>
+            <button type="button" class="z-btn z-btn-reset" id="btnReset">Reset</button>
+          </div>
+
+          <div class="z-view-head" id="viewHead"></div>
+          <div class="z-table-wrap">
+            <table class="z-table" id="dataTable"></table>
+          </div>
+          <div class="z-table-foot">
+            <label>Tampilkan <select id="pageSize"><option>10</option><option>25</option><option>50</option><option>100</option></select> data</label>
+            <div class="z-pagination" id="pagination"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="z-modal" id="itemModal" aria-hidden="true">
+    <div class="z-modal-card">
+      <div class="z-modal-head"><h3 id="itemModalTitle">Tambah Barang</h3><button type="button" class="z-close" data-close><i class="fa-solid fa-xmark"></i></button></div>
+      <form id="itemForm" class="z-form">
+        <input type="hidden" id="itemId" />
+        <label>Nama Barang<input id="itemName" required placeholder="Contoh: Pulpen Ballpoint Hitam" /></label>
+        <div class="z-form-grid">
+          <label>Kode Barang<input id="itemSku" required placeholder="BRG-0001" /></label>
+          <label>Barcode<input id="itemBarcode" placeholder="Opsional" /></label>
+        </div>
+        <div class="z-form-grid">
+          <label>Kategori<input id="itemCat" required placeholder="ATK" /></label>
+          <label>Lokasi/Rak<input id="itemLoc" required placeholder="Rak A1" /></label>
+        </div>
+        <div class="z-form-grid">
+          <label>Stok<input id="itemStock" type="number" min="0" required /></label>
+          <label>Satuan<input id="itemUnit" required placeholder="Pcs" /></label>
+        </div>
+        <div class="z-form-grid">
+          <label>Supplier<input id="itemSupplier" placeholder="Nama supplier" /></label>
+          <label>Brand<input id="itemBrand" placeholder="Nama brand" /></label>
+        </div>
+        <label>Catatan<textarea id="itemNote" rows="3" placeholder="Catatan opsional"></textarea></label>
+        <div class="z-modal-actions"><button type="button" class="z-btn z-btn-light" data-close>Batal</button><button type="submit" class="z-btn z-btn-primary">Simpan</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="z-modal" id="viewModal" aria-hidden="true">
+    <div class="z-modal-card small">
+      <div class="z-modal-head"><h3>Detail Barang</h3><button type="button" class="z-close" data-close><i class="fa-solid fa-xmark"></i></button></div>
+      <div id="viewDetail" class="z-detail"></div>
+      <div class="z-modal-actions"><button type="button" class="z-btn z-btn-outline" id="btnDetailOut">Pengeluaran</button><button type="button" class="z-btn z-btn-primary" id="btnDetailIn">Penerimaan</button></div>
+    </div>
+  </div>
+
+  <div class="z-modal" id="trxModal" aria-hidden="true">
+    <div class="z-modal-card small">
+      <div class="z-modal-head"><h3 id="trxTitle">Update Stok</h3><button type="button" class="z-close" data-close><i class="fa-solid fa-xmark"></i></button></div>
+      <form id="trxForm" class="z-form">
+        <input type="hidden" id="trxItemId" />
+        <input type="hidden" id="trxType" />
+        <div class="z-alert" id="trxInfo"></div>
+        <div class="z-form-grid">
+          <label>Jumlah<input id="trxQty" type="number" min="1" required /></label>
+          <label>Satuan<input id="trxUnit" required /></label>
+        </div>
+        <label>Catatan<textarea id="trxNote" rows="3" required placeholder="Contoh: Restock vendor / Dipakai event"></textarea></label>
+        <div class="z-modal-actions"><button type="button" class="z-btn z-btn-light" data-close>Batal</button><button type="submit" class="z-btn z-btn-primary">Konfirmasi</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="z-toast" id="toast"></div>
+  <script src="../assets/js/mark.js" type="module"></script>
+  <script defer src="../assets/js/system-expiry.js"></script>
 </body>
 </html>
