@@ -30,22 +30,53 @@
     return Math.max(0, Math.ceil(ms / 86400000));
   }
 
+  function getNoticeKey() {
+    var today = new Date().toISOString().slice(0, 10);
+    return 'systemExpiryNoticeClosed:' + today;
+  }
+
   function buildNotice(daysLeft) {
     var wrapper = document.createElement('section');
-    wrapper.className = 'system-expiry-notice';
+    wrapper.className = 'system-expiry-notice is-compact';
     wrapper.setAttribute('role', 'status');
     wrapper.setAttribute('aria-label', 'Informasi masa aktif web');
     wrapper.innerHTML =
-      '<div class="system-expiry-notice__inner">' +
-        '<div>' +
-          '<h3 class="system-expiry-notice__title">Info Masa Aktif Web</h3>' +
-          '<p class="system-expiry-notice__text">Web ini aktif sampai <span class="system-expiry-notice__date">' + escapeHtml(CONFIG.displayDate) + '</span>. Setelah tanggal itu, web akan istirahat dulu dan otomatis terkunci. Info lanjut hubungi <strong>' + escapeHtml(CONFIG.phoneText) + '</strong>.</p>' +
+      '<button type="button" class="system-expiry-notice__toggle" aria-label="Buka info masa aktif">' +
+        '<span class="system-expiry-notice__dot"></span>' +
+        '<span class="system-expiry-notice__mini-text">Aktif sampai ' + escapeHtml(CONFIG.displayDate) + '</span>' +
+        '<span class="system-expiry-notice__mini-badge">' + daysLeft + ' hari</span>' +
+      '</button>' +
+      '<div class="system-expiry-notice__panel" aria-hidden="true">' +
+        '<div class="system-expiry-notice__header">' +
+          '<div>' +
+            '<h3 class="system-expiry-notice__title">Info Masa Aktif Web</h3>' +
+            '<p class="system-expiry-notice__text">Aktif sampai <span class="system-expiry-notice__date">' + escapeHtml(CONFIG.displayDate) + '</span>. Setelah tanggal itu, web akan otomatis terkunci untuk keamanan data.</p>' +
+          '</div>' +
+          '<button type="button" class="system-expiry-notice__close" aria-label="Tutup notice">×</button>' +
         '</div>' +
         '<div class="system-expiry-notice__actions">' +
           '<span class="system-expiry-notice__badge">Sisa ' + daysLeft + ' hari</span>' +
           '<a class="system-expiry-notice__wa" href="' + CONFIG.waUrl + '" target="_blank" rel="noopener">Chat WA</a>' +
         '</div>' +
       '</div>';
+
+    var toggle = wrapper.querySelector('.system-expiry-notice__toggle');
+    var close = wrapper.querySelector('.system-expiry-notice__close');
+    var panel = wrapper.querySelector('.system-expiry-notice__panel');
+
+    function setOpen(isOpen) {
+      wrapper.classList.toggle('is-open', isOpen);
+      wrapper.classList.toggle('is-compact', !isOpen);
+      toggle.setAttribute('aria-expanded', String(isOpen));
+      panel.setAttribute('aria-hidden', String(!isOpen));
+    }
+
+    toggle.addEventListener('click', function () { setOpen(!wrapper.classList.contains('is-open')); });
+    close.addEventListener('click', function () {
+      try { localStorage.setItem(getNoticeKey(), '1'); } catch (e) {}
+      wrapper.remove();
+    });
+
     return wrapper;
   }
 
@@ -97,6 +128,10 @@
       lockPage();
       return;
     }
+
+    try {
+      if (localStorage.getItem(getNoticeKey()) === '1') return;
+    } catch (e) {}
 
     if (!document.querySelector('.system-expiry-notice')) {
       document.body.appendChild(buildNotice(getDaysLeft(now)));
