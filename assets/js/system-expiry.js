@@ -6,7 +6,7 @@
     displayDate: '6 Juni 2026',
     phoneText: '082191847167',
     waUrl: 'https://wa.me/6282191847167',
-    storageKey: 'zeppelin_expiry_notice_current_page_only'
+    storageKey: 'zeppelin_expiry_notice_hidden_v3'
   };
 
   function ready(callback) {
@@ -44,6 +44,7 @@
   }
 
   function hideNotice() {
+    storageSet(CONFIG.storageKey, '1');
     var notice = document.querySelector('.system-expiry-notice');
     if (notice) {
       notice.classList.add('is-hiding');
@@ -132,6 +133,8 @@
       lockPage();
       return;
     }
+
+    if (isNoticeHidden()) return;
 
     if (!document.querySelector('.system-expiry-notice')) {
       document.body.appendChild(buildNotice(getDaysLeft(now)));
